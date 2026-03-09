@@ -77,8 +77,11 @@
             <p class="subtitle" data-i18n="llm_prompt_subtitle">Copy and paste this into ChatGPT, Claude, or your preferred LLM.</p>
             <div class="prompt-display-wrapper">
                 <p id="generated-prompt" class="prompt-text"></p>
-                <button id="copy-btn" class="btn secondary-btn" data-i18n="copy_btn">Copy Prompt</button>
-                <span id="copy-success" class="copy-success hidden" data-i18n="copied">Copied ✓</span>
+                <div class="prompt-actions-wrapper">
+                    <button id="copy-btn" class="btn secondary-btn" data-i18n="copy_btn">Copy Prompt</button>
+                    <button id="open-gemini-btn" class="btn primary-btn" data-i18n="open_gemini_btn">Open in Gemini App</button>
+                    <span id="copy-success" class="copy-success hidden" data-i18n="copied">Copied ✓</span>
+                </div>
             </div>
         </section>
 

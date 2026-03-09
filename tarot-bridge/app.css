@@ -302,6 +302,20 @@ textarea:focus {
     margin-bottom: 1rem;
 }
 
+.prompt-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.prompt-actions-wrapper .btn {
+    width: auto;
+    flex: 1;
+    min-width: fit-content;
+}
+
 .copy-success {
     color: #4ade80;
     font-size: 0.9rem;

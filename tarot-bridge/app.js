@@ -69,6 +69,7 @@ let generatedPromptText = '';
 const promptSection = document.getElementById('prompt-section');
 const promptDisplay = document.getElementById('generated-prompt');
 const copyBtn = document.getElementById('copy-btn');
+const openGeminiBtn = document.getElementById('open-gemini-btn');
 const copySuccess = document.getElementById('copy-success');
 const langSwitch = document.getElementById('lang-switch');
 
@@ -178,6 +179,30 @@ copyBtn.addEventListener('click', async () => {
         }, 2000);
     } catch (err) {
         console.error('Failed to copy prompt: ', err);
+        alert(t('copy_fail'));
+    }
+});
+
+// Copy and Open Gemini App
+openGeminiBtn.addEventListener('click', async () => {
+    if (!generatedPromptText) return;
+    
+    try {
+        // 1. Copy to clipboard
+        await navigator.clipboard.writeText(generatedPromptText);
+        
+        // Show success indicator visually
+        copySuccess.classList.remove('hidden');
+        setTimeout(() => {
+            copySuccess.classList.add('hidden');
+        }, 2000);
+        
+        // 2. Try to open the Gemini iOS App
+        // This scheme works on iOS if the Google Gemini app is installed
+        window.location.href = 'googlegemini://';
+        
+    } catch (err) {
+        console.error('Failed to copy or open Gemini: ', err);
         alert(t('copy_fail'));
     }
 });
