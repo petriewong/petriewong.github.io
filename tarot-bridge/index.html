@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Bridge</title>
+    <meta name="description" content="A simple offline-first tool to draw Tarot cards and generate LLM prompts for reading interpretations.">
+    <link rel="stylesheet" href="app.css">
+    <!-- Google Fonts for Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="version-label">v1.1.0</div>
+    
+    <div class="lang-selector">
+        <select id="lang-switch">
+            <option value="en">English</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="zh-CN">简体中文</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+        </select>
+    </div>
+
+    <header class="app-header">
+        <h1 data-i18n="app_title">Tarot Bridge</h1>
+        <p data-i18n="app_subtitle">Draw your cards, focus your question, and cross the bridge for insight.</p>
+    </header>
+
+    <main class="container">
+        <!-- Section: Input Question -->
+        <section class="question-section section-card">
+            <h2 data-i18n="your_question">Your Question</h2>
+            <textarea id="user-question" data-i18n="question_placeholder" placeholder="E.g., What do I need to know about my new job opportunity?..." rows="3"></textarea>
+            <button id="draw-btn" class="btn primary-btn" data-i18n="draw_btn">Draw 3 Cards</button>
+        </section>
+
+        <!-- Section: The Draw (Cards) -->
+        <section class="draw-section hidden" id="draw-section">
+            <h2 data-i18n="the_spread">The Spread</h2>
+            <div class="cards-container">
+                <!-- Past -->
+                <div class="tarot-card" id="card-0">
+                    <span class="card-role" data-i18n="role_past">Past</span>
+                    <img class="card-image" src="" alt="" style="display: none; width: 100%; border-radius: 8px; margin: 10px 0;">
+                    <span class="card-suitIcon"></span>
+                    <div class="card-name-container">
+                        <span class="card-name">--</span>
+                    </div>
+                </div>
+                <!-- Present -->
+                <div class="tarot-card" id="card-1">
+                    <span class="card-role" data-i18n="role_present">Present</span>
+                    <img class="card-image" src="" alt="" style="display: none; width: 100%; border-radius: 8px; margin: 10px 0;">
+                    <span class="card-suitIcon"></span>
+                    <div class="card-name-container">
+                        <span class="card-name">--</span>
+                    </div>
+                </div>
+                <!-- Future -->
+                <div class="tarot-card" id="card-2">
+                    <span class="card-role" data-i18n="role_future">Future</span>
+                    <img class="card-image" src="" alt="" style="display: none; width: 100%; border-radius: 8px; margin: 10px 0;">
+                    <span class="card-suitIcon"></span>
+                    <div class="card-name-container">
+                        <span class="card-name">--</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: The Bridge (Prompt Generation) -->
+        <section class="prompt-section hidden section-card" id="prompt-section">
+            <h2 data-i18n="llm_prompt_title">Your LLM Prompt</h2>
+            <p class="subtitle" data-i18n="llm_prompt_subtitle">Copy and paste this into ChatGPT, Claude, or your preferred LLM.</p>
+            <div class="prompt-display-wrapper">
+                <p id="generated-prompt" class="prompt-text"></p>
+                <button id="copy-btn" class="btn secondary-btn" data-i18n="copy_btn">Copy Prompt</button>
+                <span id="copy-success" class="copy-success hidden" data-i18n="copied">Copied ✓</span>
+            </div>
+        </section>
+
+        <!-- Section: Journal (Local Storage History) -->
+        <section class="journal-section section-card" id="journal-section">
+            <div class="journal-header">
+                <h2 data-i18n="journal_title">Your Journal</h2>
+                <div class="journal-actions">
+                    <button id="export-btn" class="btn outline-btn" data-i18n="export_btn">Export Backup</button>
+                    <label for="import-file" class="btn outline-btn file-upload-btn" data-i18n="import_btn">Import Backup</label>
+                    <input type="file" id="import-file" accept=".json" class="hidden">
+                    <button id="clear-btn" class="btn text-btn" data-i18n="clear_btn">Clear History</button>
+                </div>
+            </div>
+            <p class="journal-limit-warning" data-i18n="journal_warning">History saved securely in your browser's cookies.</p>
+            <div class="journal-list" id="journal-list">
+                <!-- History Items go here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p data-i18n="footer_text">Offline First. No Data Sent to Servers.</p>
+    </footer>
+
+    <script src="i18n.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
