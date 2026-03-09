@@ -1,1 +1,61 @@
-<h1>Hello World</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍎 吃飯時間倒數器 🍎</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1 class="title">🍎 吃飯時間倒數器 🍎</h1>
+            <p class="subtitle">快來看看還有多久可以吃飯！</p>
+        </div>
+        
+        <div class="clock-container">
+            <div class="clock-wrapper">
+                <div class="clock" id="clock">
+                    <svg class="pie-chart" width="350" height="350" viewBox="0 0 350 350">
+                        <!-- Outer decorative ring -->
+                        <circle cx="175" cy="175" r="170" fill="none" stroke="#FFD700" stroke-width="8"/>
+                        <!-- Pink background circle -->
+                        <circle cx="175" cy="175" r="160" fill="#FFB6C1" stroke="#FF69B4" stroke-width="6"/>
+                        <!-- Green triangular slice -->
+                        <path id="green-slice" d="M 175 175 L 175 15 A 160 160 0 0 1 335 175 Z" fill="#98FB98"/>
+                        <!-- Decorative stars -->
+                        <circle cx="100" cy="100" r="3" fill="#FFD700"/>
+                        <circle cx="250" cy="120" r="2" fill="#FFD700"/>
+                        <circle cx="80" cy="200" r="2" fill="#FFD700"/>
+                        <circle cx="270" cy="180" r="3" fill="#FFD700"/>
+                    </svg>
+                    <!-- Rotating pointer -->
+                    <div class="pointer" id="pointer"></div>
+                    <div class="emoji-container chewing active" id="chewing-emoji">😋</div>
+                    <div class="emoji-container food" id="food-emoji">🍚</div>
+                    <div class="center-dot"></div>
+                </div>
+            </div>
+            
+            <div class="timer-section">
+                <div class="timer-label">還剩下</div>
+                <div class="timer-display" id="timer">60</div>
+                <div class="timer-unit">秒</div>
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button class="start-button" id="startBtn">
+                <span class="button-emoji">🚀</span>
+                <span class="button-text">開始倒數！</span>
+            </button>
+        </div>
+        
+        <div class="fun-messages" id="funMessages">
+            <div class="message">準備好了嗎？讓我們開始吧！</div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
