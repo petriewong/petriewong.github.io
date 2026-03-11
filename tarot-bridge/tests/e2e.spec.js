@@ -77,4 +77,48 @@ test.describe('Tarot Bridge E2E', () => {
         expect(promptText).toContain('我問了塔羅牌：「');
         expect(promptText).toContain('過去: ');
     });
+
+    test('Spiritual Spread generates 9 cards and correct prompt', async ({ page }) => {
+        // Input question
+        await page.fill('#user-question', 'Who am I truly?');
+        
+        // Select Spiritual Spread
+        await page.selectOption('#method-select', 'spiritual');
+
+        // Click Draw Cards
+        await page.click('#draw-btn');
+        
+        // Validate 9 cards are displayed
+        const visibleCards = page.locator('.tarot-card:visible');
+        await expect(visibleCards).toHaveCount(9);
+
+        // Check if prompt was generated
+        const promptText = await page.locator('#generated-prompt').innerText();
+        expect(promptText).toContain('Who am I truly?');
+        expect(promptText).toContain('Spiritual Spread');
+        expect(promptText).toContain('Personality/Nature: ');
+        expect(promptText).toContain('Destiny: ');
+    });
+
+    test('Celtic Cross Spread generates 10 cards and correct prompt', async ({ page }) => {
+        // Input question
+        await page.fill('#user-question', 'How will my project go?');
+        
+        // Select Celtic Cross Spread
+        await page.selectOption('#method-select', 'celtic');
+
+        // Click Draw Cards
+        await page.click('#draw-btn');
+        
+        // Validate 10 cards are displayed
+        const visibleCards = page.locator('.tarot-card:visible');
+        await expect(visibleCards).toHaveCount(10);
+
+        // Check if prompt was generated
+        const promptText = await page.locator('#generated-prompt').innerText();
+        expect(promptText).toContain('How will my project go?');
+        expect(promptText).toContain('Celtic Cross');
+        expect(promptText).toContain('Present: ');
+        expect(promptText).toContain('Outcome: ');
+    });
 });

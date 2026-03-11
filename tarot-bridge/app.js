@@ -88,8 +88,11 @@ function drawCards() {
         return;
     }
 
-    const isSingleDraw = methodSelect.value === 'single';
-    const drawCount = isSingleDraw ? 1 : 3;
+    const method = methodSelect.value;
+    let drawCount = 3;
+    if (method === 'single') drawCount = 1;
+    else if (method === 'spiritual') drawCount = 9;
+    else if (method === 'celtic') drawCount = 10;
 
     // Shuffle and pick unique cards
     const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
@@ -110,11 +113,37 @@ function drawCards() {
     }
 }
 
+function getRoleKey(method, index) {
+    if (method === '3card') {
+        if (index === 0) return 'role_past';
+        if (index === 1) return 'role_present';
+        if (index === 2) return 'role_future';
+    } else if (method === 'spiritual') {
+        return `role_spiritual_${index + 1}`;
+    } else if (method === 'celtic') {
+        return `role_celtic_${index + 1}`;
+    }
+    return null;
+}
+
 function displayCards(cards) {
+    const method = methodSelect.value;
     cardElements.forEach((el, index) => {
         if (index < cards.length) {
             const card = cards[index];
             el.style.display = 'block';
+            
+            const roleEl = el.querySelector('.card-role');
+            if (roleEl) {
+                const roleKey = getRoleKey(method, index);
+                if (roleKey) {
+                    roleEl.textContent = t(roleKey);
+                    roleEl.style.display = 'block';
+                } else {
+                    roleEl.style.display = 'none';
+                }
+            }
+
             el.querySelector('.card-suitIcon').textContent = card.icon;
             
             const imgEl = el.querySelector('.card-image');
@@ -166,20 +195,29 @@ function generatePrompt(question, cards) {
     };
     
     let cardStr = '';
-    let promptTemplate = '';
+    let promptTemplate = 'prompt_template';
+    const method = methodSelect.value;
 
-    if (cards.length === 3) {
-        const pastStr = `${t('role_past')}: ${getCardNameWithOrientation(cards[0])}`;
-        const presentStr = `${t('role_present')}: ${getCardNameWithOrientation(cards[1])}`;
-        const futureStr = `${t('role_future')}: ${getCardNameWithOrientation(cards[2])}`;
-        cardStr = `${pastStr}, ${presentStr}, ${futureStr}`;
-        promptTemplate = 'prompt_template';
-    } else if (cards.length === 1) {
+    if (method === 'single') {
         cardStr = getCardNameWithOrientation(cards[0]);
         promptTemplate = 'prompt_template_1card';
+    } else {
+        const cardStrings = cards.map((card, index) => {
+            const roleKey = getRoleKey(method, index);
+            if (roleKey) {
+                return `${t(roleKey)}: ${getCardNameWithOrientation(card)}`;
+            }
+            return getCardNameWithOrientation(card); // fallback
+        });
+        cardStr = cardStrings.join(', ');
     }
 
-    const methodTranslated = cards.length === 1 ? t('method_1card') : t('method_3card');
+    let methodTranslated = t(`method_${method}`);
+    if (!methodTranslated || methodTranslated === `method_${method}`) {
+        // Fallback for missing top level translation logic if any
+        if (method === 'single') methodTranslated = t('method_1card');
+        else if (method === '3card') methodTranslated = t('method_3card');
+    }
     generatedPromptText = t_replace(promptTemplate, { question: question, cards: cardStr, method: methodTranslated });
     
     promptDisplay.textContent = generatedPromptText;
@@ -419,6 +457,19 @@ function initApp() {
     const loadedLang = getSavedLanguage();
     langSwitch.value = loadedLang;
     setLanguage(loadedLang);
+    updateDrawButtonText();
+}
+
+methodSelect.addEventListener('change', updateDrawButtonText);
+
+function updateDrawButtonText() {
+    const method = methodSelect.value;
+    let countKey = 'draw_btn_3';
+    if (method === 'single') countKey = 'draw_btn_1';
+    else if (method === 'spiritual') countKey = 'draw_btn_9';
+    else if (method === 'celtic') countKey = 'draw_btn_10';
+    
+    drawBtn.textContent = t(countKey);
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
