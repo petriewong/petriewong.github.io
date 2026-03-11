@@ -56,14 +56,11 @@ let currentDraw = [];
 
 // --- DOM Elements ---
 const drawBtn = document.getElementById('draw-btn');
+const methodSelect = document.getElementById('method-select');
 const drawSection = document.getElementById('draw-section');
 const userQuestionEl = document.getElementById('user-question');
 
-const cardElements = [
-    document.getElementById('card-0'),
-    document.getElementById('card-1'),
-    document.getElementById('card-2')
-];
+const cardElements = document.querySelectorAll('.tarot-card');
 
 let generatedPromptText = '';
 const promptSection = document.getElementById('prompt-section');
@@ -91,9 +88,12 @@ function drawCards() {
         return;
     }
 
-    // Shuffle and pick 3 unique cards
+    const isSingleDraw = methodSelect.value === 'single';
+    const drawCount = isSingleDraw ? 1 : 3;
+
+    // Shuffle and pick unique cards
     const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
-    currentDraw = shuffled.slice(0, 3).map(card => ({
+    currentDraw = shuffled.slice(0, drawCount).map(card => ({
         ...card,
         isReversed: Math.random() < 0.5 // 50/50 chance
     }));
@@ -104,39 +104,53 @@ function drawCards() {
     // Show section
     drawSection.classList.remove('hidden');
 
-    // Trigger Bridge Feature (Implementation pending)
+    // Trigger Bridge Feature
     if (typeof generatePrompt === 'function') {
         generatePrompt(question, currentDraw);
     }
 }
 
 function displayCards(cards) {
-    cards.forEach((card, index) => {
-        const el = cardElements[index];
-        el.querySelector('.card-suitIcon').textContent = card.icon;
-        
-        const imgEl = el.querySelector('.card-image');
-        imgEl.src = card.image;
-        
-        const translatedName = getTranslatedCardName(card);
-        imgEl.alt = translatedName;
-        imgEl.style.display = 'block';
-        imgEl.style.transform = card.isReversed ? 'rotate(180deg)' : 'none';
+    cardElements.forEach((el, index) => {
+        if (index < cards.length) {
+            const card = cards[index];
+            el.style.display = 'block';
+            el.querySelector('.card-suitIcon').textContent = card.icon;
+            
+            const imgEl = el.querySelector('.card-image');
+            imgEl.src = card.image;
+            
+            const translatedName = getTranslatedCardName(card);
+            imgEl.alt = translatedName;
+            imgEl.style.display = 'block';
+            imgEl.style.transform = card.isReversed ? 'rotate(180deg)' : 'none';
 
-        const nameStr = card.isReversed ? `${translatedName} ${t('reversed_suffix')}` : `${translatedName} ${t('upright_suffix')}`;
-        el.querySelector('.card-name').textContent = nameStr;
-        
-        if (card.isReversed) {
-            el.classList.add('reversed');
+            const nameStr = card.isReversed ? `${translatedName} ${t('reversed_suffix')}` : `${translatedName} ${t('upright_suffix')}`;
+            el.querySelector('.card-name').textContent = nameStr;
+            
+            if (card.isReversed) {
+                el.classList.add('reversed');
+            } else {
+                el.classList.remove('reversed');
+            }
+            
+            // Remove old animation class, force reflow, and add again to re-trigger animation
+            el.classList.remove('tarot-card-animating');
+            void el.offsetWidth; 
+            el.classList.add('tarot-card-animating');
         } else {
-            el.classList.remove('reversed');
+            // Hide unused card slots
+            el.style.display = 'none';
         }
-        
-        // Remove old animation class, force reflow, and add again to re-trigger animation
-        el.classList.remove('tarot-card-animating');
-        void el.offsetWidth; 
-        el.classList.add('tarot-card-animating');
     });
+
+    // Center single card draw if needed
+    const drawGrid = document.querySelector('.draw-grid');
+    if (cards.length === 1) {
+        drawGrid.classList.add('single-card-grid');
+    } else {
+        drawGrid.classList.remove('single-card-grid');
+    }
 }
 
 // Ensure the CSS animation triggers correctly by toggling
@@ -144,19 +158,29 @@ drawBtn.addEventListener('click', drawCards);
 
 // --- Bridge Feature (Prompt Generation) ---
 function generatePrompt(question, cards) {
-    if (cards.length !== 3) return;
+    if (cards.length === 0) return;
     
     const getCardNameWithOrientation = (card) => {
         const name = getTranslatedCardName(card);
         return card.isReversed ? `${name} ${t('reversed_suffix')}` : `${name} ${t('upright_suffix')}`;
     };
     
-    const pastStr = `${t('role_past')}: ${getCardNameWithOrientation(cards[0])}`;
-    const presentStr = `${t('role_present')}: ${getCardNameWithOrientation(cards[1])}`;
-    const futureStr = `${t('role_future')}: ${getCardNameWithOrientation(cards[2])}`;
-    
-    const cardStr = `${pastStr}, ${presentStr}, ${futureStr}`;
-    generatedPromptText = t_replace('prompt_template', { question: question, cards: cardStr });
+    let cardStr = '';
+    let promptTemplate = '';
+
+    if (cards.length === 3) {
+        const pastStr = `${t('role_past')}: ${getCardNameWithOrientation(cards[0])}`;
+        const presentStr = `${t('role_present')}: ${getCardNameWithOrientation(cards[1])}`;
+        const futureStr = `${t('role_future')}: ${getCardNameWithOrientation(cards[2])}`;
+        cardStr = `${pastStr}, ${presentStr}, ${futureStr}`;
+        promptTemplate = 'prompt_template';
+    } else if (cards.length === 1) {
+        cardStr = getCardNameWithOrientation(cards[0]);
+        promptTemplate = 'prompt_template_1card';
+    }
+
+    const methodTranslated = cards.length === 1 ? t('method_1card') : t('method_3card');
+    generatedPromptText = t_replace(promptTemplate, { question: question, cards: cardStr, method: methodTranslated });
     
     promptDisplay.textContent = generatedPromptText;
     promptSection.classList.remove('hidden');

@@ -31,16 +31,24 @@
 
     <main class="container">
         <!-- Section: Input Question -->
-        <section class="question-section section-card">
+        <section class="control-panel section-card">
+            <h2 data-i18n="method_label">Method:</h2>
+            <div class="input-group" style="margin-bottom: 1rem;">
+                <select id="method-select" class="method-selector">
+                    <option value="3card" data-i18n="method_3card">3-Card Draw (Past/Present/Future)</option>
+                    <option value="single" data-i18n="method_1card">Single Card (Card of the Day)</option>
+                </select>
+            </div>
+            
             <h2 data-i18n="your_question">Your Question</h2>
             <textarea id="user-question" data-i18n="question_placeholder" placeholder="E.g., What do I need to know about my new job opportunity?..." rows="3"></textarea>
-            <button id="draw-btn" class="btn primary-btn" data-i18n="draw_btn">Draw 3 Cards</button>
+            <button id="draw-btn" class="btn primary-btn" data-i18n="draw_btn">Draw Cards</button>
         </section>
 
         <!-- Section: The Draw (Cards) -->
         <section class="draw-section hidden" id="draw-section">
             <h2 data-i18n="the_spread">The Spread</h2>
-            <div class="cards-container">
+            <div class="draw-grid">
                 <!-- Past -->
                 <div class="tarot-card" id="card-0">
                     <span class="card-role" data-i18n="role_past">Past</span>
