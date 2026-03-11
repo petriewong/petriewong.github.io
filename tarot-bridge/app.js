@@ -173,8 +173,9 @@ function displayCards(cards) {
         }
     });
 
-    // Center single card draw if needed
+    // Set grid layout attributes based on selected method
     const drawGrid = document.querySelector('.draw-grid');
+    drawGrid.dataset.method = method;
     if (cards.length === 1) {
         drawGrid.classList.add('single-card-grid');
     } else {

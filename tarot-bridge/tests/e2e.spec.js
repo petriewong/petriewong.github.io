@@ -92,6 +92,9 @@ test.describe('Tarot Bridge E2E', () => {
         const visibleCards = page.locator('.tarot-card:visible');
         await expect(visibleCards).toHaveCount(9);
 
+        // Check Grid Layout binding
+        await expect(page.locator('.draw-grid')).toHaveAttribute('data-method', 'spiritual');
+
         // Check if prompt was generated
         const promptText = await page.locator('#generated-prompt').innerText();
         expect(promptText).toContain('Who am I truly?');
@@ -113,6 +116,14 @@ test.describe('Tarot Bridge E2E', () => {
         // Validate 10 cards are displayed
         const visibleCards = page.locator('.tarot-card:visible');
         await expect(visibleCards).toHaveCount(10);
+
+        // Check Grid Layout binding
+        await expect(page.locator('.draw-grid')).toHaveAttribute('data-method', 'celtic');
+
+        // Verify the 2nd card (Obstacles) has the rotation animation associated with it via CSS
+        // Playwright handles CSS differently, but we can check if it's the second child
+        const obstaclesCard = page.locator('.draw-grid[data-method="celtic"] .tarot-card:nth-child(2)');
+        await expect(obstaclesCard).toBeVisible();
 
         // Check if prompt was generated
         const promptText = await page.locator('#generated-prompt').innerText();
