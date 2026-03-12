@@ -402,6 +402,189 @@ textarea:focus {
 .draw-grid[data-method="chakra"] .tarot-card:nth-child(6) { grid-area: 2 / 1 / 3 / 2; }
 .draw-grid[data-method="chakra"] .tarot-card:nth-child(7) { grid-area: 1 / 1 / 2 / 2; }
 
+/* 1. Linear 5 Card Grid */
+.draw-grid[data-method="linear5"] {
+    grid-template-columns: repeat(5, minmax(0, 160px));
+    gap: 1rem;
+    max-width: 900px;
+}
+.draw-grid[data-method="linear5"] .tarot-card { aspect-ratio: 16 / 28; padding: 5%; }
+
+/* 2. Cross 5 Card Grid */
+.draw-grid[data-method="cross5"] {
+    grid-template-columns: repeat(3, minmax(0, 160px));
+    grid-template-rows: repeat(3, auto);
+    gap: 1rem;
+    max-width: 550px;
+}
+.draw-grid[data-method="cross5"] .tarot-card { aspect-ratio: 16 / 28; padding: 5%; }
+.draw-grid[data-method="cross5"] .tarot-card:nth-child(1) { grid-area: 2 / 2 / 3 / 3; }
+.draw-grid[data-method="cross5"] .tarot-card:nth-child(2) { grid-area: 2 / 1 / 3 / 2; }
+.draw-grid[data-method="cross5"] .tarot-card:nth-child(3) { grid-area: 2 / 3 / 3 / 4; }
+.draw-grid[data-method="cross5"] .tarot-card:nth-child(4) { grid-area: 3 / 2 / 4 / 3; }
+.draw-grid[data-method="cross5"] .tarot-card:nth-child(5) { grid-area: 1 / 2 / 2 / 3; }
+
+/* 3. Catching Feelings (Diagonal + 1) */
+.draw-grid[data-method="feelings"] {
+    grid-template-columns: repeat(5, minmax(0, 140px));
+    grid-template-rows: repeat(4, auto);
+    gap: 1rem;
+    max-width: 800px;
+}
+.draw-grid[data-method="feelings"] .tarot-card { aspect-ratio: 14 / 24; padding: 5%; font-size: 0.9em; }
+.draw-grid[data-method="feelings"] .tarot-card:nth-child(1) { grid-area: 4 / 1 / 5 / 2; }
+.draw-grid[data-method="feelings"] .tarot-card:nth-child(2) { grid-area: 3 / 2 / 4 / 3; }
+.draw-grid[data-method="feelings"] .tarot-card:nth-child(3) { grid-area: 2 / 3 / 3 / 4; }
+.draw-grid[data-method="feelings"] .tarot-card:nth-child(4) { grid-area: 1 / 4 / 2 / 5; }
+.draw-grid[data-method="feelings"] .tarot-card:nth-child(5) { grid-area: 2 / 5 / 3 / 6; }
+.draw-grid[data-method="feelings"] .tarot-card:nth-child(6) { grid-area: 4 / 3 / 5 / 4; }
+
+/* 4. Relationship Check-In (8 cards) */
+.draw-grid[data-method="checkin"] {
+    grid-template-columns: repeat(4, minmax(0, 140px));
+    grid-template-rows: repeat(3, auto);
+    gap: 1rem;
+    max-width: 650px;
+}
+.draw-grid[data-method="checkin"] .tarot-card { aspect-ratio: 14 / 24; padding: 5%; font-size: 0.85em; }
+/* Past Foundation (L shape left) */
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(2) { grid-area: 2 / 1 / 3 / 2; }
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(3) { grid-area: 3 / 1 / 4 / 2; }
+/* Current Dynamic (V Shape center) */
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(4) { grid-area: 2 / 2 / 3 / 3; }
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(5) { grid-area: 3 / 3 / 4 / 4; }
+/* Future column (right) */
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(6) { grid-area: 3 / 4 / 4 / 5; }
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(7) { grid-area: 2 / 4 / 3 / 5; }
+.draw-grid[data-method="checkin"] .tarot-card:nth-child(8) { grid-area: 1 / 4 / 2 / 5; }
+
+/* 5. Astrological Wheel (12 Cards - Circle) */
+.draw-grid[data-method="astrological"] {
+    grid-template-columns: repeat(4, minmax(0, 110px));
+    grid-template-rows: repeat(4, auto);
+    gap: 1rem;
+    max-width: 600px;
+}
+.draw-grid[data-method="astrological"] .tarot-card { aspect-ratio: 11 / 19; padding: 5%; font-size: 0.75em; }
+.draw-grid[data-method="astrological"] .card-role { display: none; }
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(1) { grid-area: 2 / 1 / 3 / 2; } /* Mid Left */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(2) { grid-area: 3 / 1 / 4 / 2; } /* Bot Left */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(3) { grid-area: 4 / 2 / 5 / 3; } /* Bot Mid-Left */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(4) { grid-area: 4 / 3 / 5 / 4; } /* Bot Mid-Right */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(5) { grid-area: 3 / 4 / 4 / 5; } /* Bot Right */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(6) { grid-area: 2 / 4 / 3 / 5; } /* Mid Right */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(7) { grid-area: 1 / 4 / 2 / 5; } /* Top Right */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(8) { grid-area: 1 / 3 / 2 / 4; } /* Top Mid-Right */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(9) { grid-area: 1 / 2 / 2 / 3; } /* Top Mid-Left */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(10) { grid-area: 1 / 1 / 2 / 2; } /* Top Left */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(11) { grid-area: 2 / 2 / 3 / 3; justify-self: center; } /* Inner Left */
+.draw-grid[data-method="astrological"] .tarot-card:nth-child(12) { grid-area: 2 / 3 / 3 / 4; justify-self: center; } /* Inner Right */
+
+/* 6. Three Pyramids (6 cards) */
+.draw-grid[data-method="pyramids"] {
+    grid-template-columns: repeat(5, minmax(0, 130px));
+    grid-template-rows: repeat(2, auto);
+    gap: 1rem;
+    max-width: 750px;
+}
+.draw-grid[data-method="pyramids"] .tarot-card { aspect-ratio: 13 / 22; padding: 5%; }
+.draw-grid[data-method="pyramids"] .tarot-card:nth-child(1) { grid-area: 2 / 1 / 3 / 2; } /* Left Bot */
+.draw-grid[data-method="pyramids"] .tarot-card:nth-child(2) { grid-area: 1 / 2 / 2 / 3; } /* Left Top */
+.draw-grid[data-method="pyramids"] .tarot-card:nth-child(3) { grid-area: 2 / 3 / 3 / 4; } /* Center Bot */
+.draw-grid[data-method="pyramids"] .tarot-card:nth-child(4) { grid-area: 1 / 4 / 2 / 5; } /* Mid Right Top */
+.draw-grid[data-method="pyramids"] .tarot-card:nth-child(5) { grid-area: 2 / 5 / 3 / 6; } /* Right Bot */
+.draw-grid[data-method="pyramids"] .tarot-card:nth-child(6) { grid-area: 1 / 3 / 2 / 4; } /* Center Top */
+
+/* 7. Akashic Records (7 cards) */
+.draw-grid[data-method="akashic"] {
+    grid-template-columns: repeat(3, minmax(0, 140px));
+    grid-template-rows: repeat(3, auto);
+    gap: 1rem;
+    max-width: 500px;
+}
+.draw-grid[data-method="akashic"] .tarot-card { aspect-ratio: 14 / 24; padding: 5%; }
+.draw-grid[data-method="akashic"] .card-role { display: none; }
+.draw-grid[data-method="akashic"] .tarot-card:nth-child(1) { grid-area: 1 / 2 / 2 / 3; }
+.draw-grid[data-method="akashic"] .tarot-card:nth-child(2) { grid-area: 2 / 3 / 3 / 4; }
+.draw-grid[data-method="akashic"] .tarot-card:nth-child(3) { grid-area: 3 / 3 / 4 / 4; }
+.draw-grid[data-method="akashic"] .tarot-card:nth-child(4) { grid-area: 3 / 2 / 4 / 3; }
+.draw-grid[data-method="akashic"] .tarot-card:nth-child(5) { grid-area: 3 / 1 / 4 / 2; }
+.draw-grid[data-method="akashic"] .tarot-card:nth-child(6) { grid-area: 2 / 1 / 3 / 2; }
+.draw-grid[data-method="akashic"] .tarot-card:nth-child(7) { grid-area: 2 / 2 / 3 / 3; } /* Center */
+
+/* 8. Full Moon Spread (5 cards Semi-Circle) */
+.draw-grid[data-method="fullmoon"] {
+    grid-template-columns: repeat(5, minmax(0, 140px));
+    grid-template-rows: auto auto;
+    gap: 1rem;
+    max-width: 800px;
+}
+.draw-grid[data-method="fullmoon"] .tarot-card { aspect-ratio: 14 / 24; padding: 5%; }
+.draw-grid[data-method="fullmoon"] .tarot-card:nth-child(1) { grid-area: 2 / 1 / 3 / 2; }
+.draw-grid[data-method="fullmoon"] .tarot-card:nth-child(2) { grid-area: 1 / 2 / 2 / 3; }
+.draw-grid[data-method="fullmoon"] .tarot-card:nth-child(3) { grid-area: 1 / 3 / 2 / 4; }
+.draw-grid[data-method="fullmoon"] .tarot-card:nth-child(4) { grid-area: 1 / 4 / 2 / 5; }
+.draw-grid[data-method="fullmoon"] .tarot-card:nth-child(5) { grid-area: 2 / 5 / 3 / 6; }
+
+/* 9. New Moon Spread (5 cards Crescent) */
+.draw-grid[data-method="newmoon"] {
+    grid-template-columns: repeat(3, minmax(0, 140px));
+    grid-template-rows: repeat(3, auto);
+    gap: 1rem;
+    max-width: 500px;
+}
+.draw-grid[data-method="newmoon"] .tarot-card { aspect-ratio: 14 / 24; padding: 5%; }
+.draw-grid[data-method="newmoon"] .tarot-card:nth-child(1) { grid-area: 3 / 1 / 4 / 2; }
+.draw-grid[data-method="newmoon"] .tarot-card:nth-child(2) { grid-area: 2 / 2 / 3 / 3; }
+.draw-grid[data-method="newmoon"] .tarot-card:nth-child(3) { grid-area: 1 / 2 / 2 / 3; }
+.draw-grid[data-method="newmoon"] .tarot-card:nth-child(4) { grid-area: 1 / 3 / 2 / 4; }
+.draw-grid[data-method="newmoon"] .tarot-card:nth-child(5) { grid-area: 2 / 3 / 3 / 4; }
+
+/* 10. Daily Manifestation Spread (4 cards stairs) */
+.draw-grid[data-method="manifestation"] {
+    grid-template-columns: repeat(4, minmax(0, 140px));
+    grid-template-rows: repeat(4, auto);
+    gap: 1rem;
+    max-width: 650px;
+}
+.draw-grid[data-method="manifestation"] .tarot-card { aspect-ratio: 14 / 24; padding: 5%; }
+.draw-grid[data-method="manifestation"] .tarot-card:nth-child(1) { grid-area: 4 / 1 / 5 / 2; }
+.draw-grid[data-method="manifestation"] .tarot-card:nth-child(2) { grid-area: 3 / 2 / 4 / 3; }
+.draw-grid[data-method="manifestation"] .tarot-card:nth-child(3) { grid-area: 2 / 3 / 3 / 4; }
+.draw-grid[data-method="manifestation"] .tarot-card:nth-child(4) { grid-area: 1 / 4 / 2 / 5; }
+
+/* 11. The Path Spread (4 cards winding) */
+.draw-grid[data-method="path"] {
+    grid-template-columns: repeat(3, minmax(0, 140px));
+    grid-template-rows: repeat(3, auto);
+    gap: 1rem;
+    max-width: 500px;
+}
+.draw-grid[data-method="path"] .tarot-card { aspect-ratio: 14 / 24; padding: 5%; }
+.draw-grid[data-method="path"] .tarot-card:nth-child(1) { grid-area: 3 / 1 / 4 / 2; }
+.draw-grid[data-method="path"] .tarot-card:nth-child(2) { grid-area: 2 / 2 / 3 / 3; }
+.draw-grid[data-method="path"] .tarot-card:nth-child(3) { grid-area: 2 / 3 / 3 / 4; }
+.draw-grid[data-method="path"] .tarot-card:nth-child(4) { grid-area: 1 / 2 / 2 / 3; }
+
+/* 12. My Future Self (9 cards 3x3) */
+.draw-grid[data-method="futureself"] {
+    grid-template-columns: repeat(3, minmax(0, 160px));
+    grid-template-rows: repeat(3, auto);
+    gap: 1.5rem;
+    max-width: 600px;
+}
+.draw-grid[data-method="futureself"] .tarot-card { aspect-ratio: 16 / 28; padding: 5%; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(1) { grid-area: 3 / 1 / 4 / 2; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(2) { grid-area: 3 / 2 / 4 / 3; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(3) { grid-area: 3 / 3 / 4 / 4; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(4) { grid-area: 2 / 1 / 3 / 2; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(5) { grid-area: 2 / 2 / 3 / 3; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(6) { grid-area: 2 / 3 / 3 / 4; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(7) { grid-area: 1 / 1 / 2 / 2; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(8) { grid-area: 1 / 2 / 2 / 3; }
+.draw-grid[data-method="futureself"] .tarot-card:nth-child(9) { grid-area: 1 / 3 / 2 / 4; }
+
 @keyframes fadeInRotated {
     to {
         opacity: 1;

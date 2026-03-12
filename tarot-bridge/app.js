@@ -94,10 +94,22 @@ function drawCards() {
     else if (method === 'spiritual') drawCount = 9;
     else if (method === 'celtic') drawCount = 10;
     else if (method === 'self_awareness') drawCount = 3;
+    else if (method === 'linear5') drawCount = 5;
+    else if (method === 'cross5') drawCount = 5;
     else if (method === 'decision') drawCount = 5;
+    else if (method === 'fullmoon') drawCount = 5;
+    else if (method === 'newmoon') drawCount = 5;
+    else if (method === 'manifestation') drawCount = 4;
+    else if (method === 'path') drawCount = 4;
+    else if (method === 'feelings') drawCount = 6;
+    else if (method === 'pyramids') drawCount = 6;
     else if (method === 'horseshoe') drawCount = 7;
     else if (method === 'relationship') drawCount = 7;
+    else if (method === 'akashic') drawCount = 7;
     else if (method === 'chakra') drawCount = 7;
+    else if (method === 'checkin') drawCount = 8;
+    else if (method === 'futureself') drawCount = 9;
+    else if (method === 'astrological') drawCount = 12;
 
     // Shuffle and pick unique cards
     const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
@@ -129,14 +141,38 @@ function getRoleKey(method, index) {
         return `role_celtic_${index + 1}`;
     } else if (method === 'self_awareness') {
         return `role_self_${index + 1}`;
+    } else if (method === 'linear5') {
+        return `role_lin5_${index + 1}`;
+    } else if (method === 'cross5') {
+        return `role_cross5_${index + 1}`;
     } else if (method === 'decision') {
         return `role_dec_${index + 1}`;
+    } else if (method === 'fullmoon') {
+        return `role_fm_${index + 1}`;
+    } else if (method === 'newmoon') {
+        return `role_nm_${index + 1}`;
+    } else if (method === 'manifestation') {
+        return `role_mani_${index + 1}`;
+    } else if (method === 'path') {
+        return `role_path_${index + 1}`;
+    } else if (method === 'feelings') {
+        return `role_feel_${index + 1}`;
+    } else if (method === 'pyramids') {
+        return `role_pyr_${index + 1}`;
     } else if (method === 'horseshoe') {
         return `role_horse_${index + 1}`;
     } else if (method === 'relationship') {
         return `role_rel_${index + 1}`;
+    } else if (method === 'akashic') {
+        return `role_aka_${index + 1}`;
     } else if (method === 'chakra') {
         return `role_cha_${index + 1}`;
+    } else if (method === 'checkin') {
+        return `role_chk_${index + 1}`;
+    } else if (method === 'futureself') {
+        return `role_future_${index + 1}`;
+    } else if (method === 'astrological') {
+        return `role_astro_${index + 1}`;
     }
     return null;
 }
@@ -511,16 +547,27 @@ methodSelect.addEventListener('change', () => {
 
 function updateDrawButtonText() {
     const method = methodSelect.value;
-    let countKey = 'draw_btn_3';
-    if (method === 'single') countKey = 'draw_btn_1';
-    else if (method === 'spiritual') countKey = 'draw_btn_9';
-    else if (method === 'celtic') countKey = 'draw_btn_10';
-    else if (method === 'self_awareness') countKey = 'draw_btn_3';
-    else if (method === 'decision') countKey = 'draw_btn_5';
-    else if (method === 'horseshoe' || method === 'relationship' || method === 'chakra') countKey = 'draw_btn_7';
-    
-    drawBtn.textContent = t(countKey);
+    if (method === 'single') {
+        drawBtn.textContent = t('draw_btn_1');
+    } else if (method === 'manifestation' || method === 'path') {
+        drawBtn.textContent = t('draw_btn_4') || 'Draw 4 Cards';
+    } else if (method === 'decision' || method === 'linear5' || method === 'cross5' || method === 'fullmoon' || method === 'newmoon') {
+        drawBtn.textContent = t('draw_btn_5');
+    } else if (method === 'feelings' || method === 'pyramids') {
+        drawBtn.textContent = t('draw_btn_6') || 'Draw 6 Cards';
+    } else if (method === 'horseshoe' || method === 'relationship' || method === 'chakra' || method === 'akashic') {
+        drawBtn.textContent = t('draw_btn_7');
+    } else if (method === 'checkin') {
+        drawBtn.textContent = t('draw_btn_8') || 'Draw 8 Cards';
+    } else if (method === 'spiritual' || method === 'futureself') {
+        drawBtn.textContent = t('draw_btn_9');
+    } else if (method === 'celtic') {
+        drawBtn.textContent = t('draw_btn_10');
+    } else if (method === 'astrological') {
+        drawBtn.textContent = t('draw_btn_12') || 'Draw 12 Cards';
+    } else {
+        drawBtn.textContent = t('draw_btn_3');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
-
