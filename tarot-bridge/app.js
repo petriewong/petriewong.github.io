@@ -93,6 +93,11 @@ function drawCards() {
     if (method === 'single') drawCount = 1;
     else if (method === 'spiritual') drawCount = 9;
     else if (method === 'celtic') drawCount = 10;
+    else if (method === 'self_awareness') drawCount = 3;
+    else if (method === 'decision') drawCount = 5;
+    else if (method === 'horseshoe') drawCount = 7;
+    else if (method === 'relationship') drawCount = 7;
+    else if (method === 'chakra') drawCount = 7;
 
     // Shuffle and pick unique cards
     const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
@@ -122,6 +127,16 @@ function getRoleKey(method, index) {
         return `role_spiritual_${index + 1}`;
     } else if (method === 'celtic') {
         return `role_celtic_${index + 1}`;
+    } else if (method === 'self_awareness') {
+        return `role_self_${index + 1}`;
+    } else if (method === 'decision') {
+        return `role_dec_${index + 1}`;
+    } else if (method === 'horseshoe') {
+        return `role_horse_${index + 1}`;
+    } else if (method === 'relationship') {
+        return `role_rel_${index + 1}`;
+    } else if (method === 'chakra') {
+        return `role_cha_${index + 1}`;
     }
     return null;
 }
@@ -446,6 +461,7 @@ function updateDynamicLanguage() {
         generatePrompt(userQuestionEl.value.trim(), currentDraw);
     }
     renderJournal();
+    updateMethodDetails();
 }
 
 langSwitch.addEventListener('change', (e) => {
@@ -459,9 +475,39 @@ function initApp() {
     langSwitch.value = loadedLang;
     setLanguage(loadedLang);
     updateDrawButtonText();
+    updateMethodDetails();
 }
 
-methodSelect.addEventListener('change', updateDrawButtonText);
+function updateMethodDetails() {
+    const method = methodSelect.value;
+    const descEl = document.getElementById('method-desc');
+    const tagsEl = document.getElementById('method-tags');
+    
+    // Translations keys based on method selected
+    const descKey = `desc_${method}`;
+    const tagsKey = `tags_${method}`;
+    
+    // Apply Description
+    descEl.textContent = t(descKey);
+    
+    // Apply Tags
+    tagsEl.innerHTML = ''; // clear
+    const tagsStr = t(tagsKey);
+    if(tagsStr) {
+        const tagsArray = tagsStr.split(',').map(tag => tag.trim());
+        tagsArray.forEach(tag => {
+            const span = document.createElement('span');
+            span.className = 'method-tag';
+            span.textContent = tag;
+            tagsEl.appendChild(span);
+        });
+    }
+}
+
+methodSelect.addEventListener('change', () => {
+    updateDrawButtonText();
+    updateMethodDetails();
+});
 
 function updateDrawButtonText() {
     const method = methodSelect.value;
@@ -469,6 +515,9 @@ function updateDrawButtonText() {
     if (method === 'single') countKey = 'draw_btn_1';
     else if (method === 'spiritual') countKey = 'draw_btn_9';
     else if (method === 'celtic') countKey = 'draw_btn_10';
+    else if (method === 'self_awareness') countKey = 'draw_btn_3';
+    else if (method === 'decision') countKey = 'draw_btn_5';
+    else if (method === 'horseshoe' || method === 'relationship' || method === 'chakra') countKey = 'draw_btn_7';
     
     drawBtn.textContent = t(countKey);
 }

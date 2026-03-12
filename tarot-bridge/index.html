@@ -33,13 +33,23 @@
         <!-- Section: Input Question -->
         <section class="control-panel section-card">
             <h2 data-i18n="method_label">Method:</h2>
-            <div class="input-group" style="margin-bottom: 1rem;">
+            <div class="input-group" style="margin-bottom: 0.5rem;">
                 <select id="method-select" class="method-selector">
                     <option value="3card" data-i18n="method_3card">3-Card Draw (Past/Present/Future)</option>
                     <option value="single" data-i18n="method_1card">Single Card (Card of the Day)</option>
                     <option value="spiritual" data-i18n="method_spiritual">Spiritual Spread</option>
                     <option value="celtic" data-i18n="method_celtic">Celtic Cross Spread</option>
+                    <option value="self_awareness" data-i18n="method_self_awareness">Self Awareness Spread</option>
+                    <option value="decision" data-i18n="method_decision">Decision Making Spread</option>
+                    <option value="horseshoe" data-i18n="method_horseshoe">Horseshoe Spread</option>
+                    <option value="relationship" data-i18n="method_relationship">Relationship Mirror</option>
+                    <option value="chakra" data-i18n="method_chakra">Chakra Spread</option>
                 </select>
+            </div>
+            
+            <div id="method-details" class="method-details">
+                <div class="method-tags" id="method-tags"></div>
+                <p class="method-description" id="method-desc"></p>
             </div>
             
             <h2 data-i18n="your_question">Your Question</h2>
