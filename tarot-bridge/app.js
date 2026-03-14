@@ -1,4 +1,4 @@
-// Version: 1.1.4
+// Version: 1.1.6
 // --- Deck Data ---
 const suits = [
     { name: 'Wands', icon: '🔥' },
