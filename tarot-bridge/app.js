@@ -1,4 +1,4 @@
-// Version: 1.1.6
+// Version: 1.1.7
 // --- Deck Data ---
 const suits = [
     { name: 'Wands', icon: '🔥' },
@@ -389,6 +389,7 @@ function saveReading(question, cards) {
         id: Date.now().toString(),
         date: new Date().toISOString(),
         question: question,
+        method: methodSelect.value,
         cards: cards.map(c => ({
             id: c.id,
             type: c.type,
@@ -437,6 +438,10 @@ function renderJournal() {
                 </div>
                 <div class="entry-question">Q: "${r.question}"</div>
                 <div class="entry-cards">Cards: ${cardStrings.join(', ')}</div>
+                <div class="entry-actions" style="margin-top: 10px; display: flex; gap: 8px;">
+                    <button class="btn secondary-btn restore-btn" data-id="${r.id}">Restore to view</button>
+                    <button class="btn outline-btn delete-btn" data-id="${r.id}">Delete</button>
+                </div>
             </div>
         `;
     }).join('');
@@ -449,6 +454,78 @@ clearBtn.addEventListener('click', () => {
         renderJournal();
     }
 });
+
+// Journal Reading Actions
+journalListEl.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-btn')) {
+        const id = e.target.getAttribute('data-id');
+        deleteReading(id);
+    } else if (e.target.classList.contains('restore-btn')) {
+        const id = e.target.getAttribute('data-id');
+        restoreReading(id);
+    }
+});
+
+function deleteReading(id) {
+    if (!confirm('Are you sure you want to delete this reading?')) return;
+    let readings = getReadings();
+    readings = readings.filter(r => r.id !== id);
+    setReadings(readings);
+    renderJournal();
+}
+
+function restoreReading(id) {
+    const readings = getReadings();
+    const reading = readings.find(r => r.id === id);
+    if (!reading) return;
+
+    let method = reading.method;
+    if (!method) {
+        const len = reading.cards.length;
+        if (len === 1) method = 'single';
+        else if (len === 3) method = '3card';
+        else if (len === 4) method = 'path';
+        else if (len === 5) method = 'decision';
+        else if (len === 6) method = 'feelings';
+        else if (len === 7) method = 'horseshoe';
+        else if (len === 8) method = 'checkin';
+        else if (len === 9) method = 'spiritual';
+        else if (len === 10) method = 'celtic';
+        else if (len === 12) method = 'astrological';
+        else method = '3card';
+    }
+
+    // Set form fields
+    document.getElementById('user-question').value = reading.question;
+    methodSelect.value = method;
+    methodSelect.dispatchEvent(new Event('change')); // Update details and UI buttons
+
+    // Map saved data to deck actuals using robust logic
+    currentDraw = reading.cards.map(c => {
+        let match = tarotDeck.find(td => td.id === c.id);
+        if(!match && typeof c === 'string') {
+            // Very old string-only fallback logic
+            match = tarotDeck.find(td => getTranslatedCardName(td) === c.replace(' (U)', '').replace(' (R)', ''));
+            return { ...(match || tarotDeck[0]), isReversed: c.includes('(R)') };
+        }
+        return {
+            ...(match || tarotDeck[0]), // Safe fallback
+            isReversed: c.isReversed
+        };
+    });
+
+    displayCards(currentDraw);
+    document.getElementById('draw-section').classList.remove('hidden');
+    
+    // Smooth scroll and tab switch
+    const readingTabBtn = document.querySelector('.tab-btn[data-target="view-reading"]');
+    if (readingTabBtn) readingTabBtn.click();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (typeof generatePrompt === 'function') {
+        generatePrompt(reading.question, currentDraw);
+    }
+}
 
 // Initialize Journal
 renderJournal();

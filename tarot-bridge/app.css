@@ -248,6 +248,25 @@ textarea:focus {
     margin-right: auto;
 }
 
+@media (max-width: 600px) {
+    .draw-grid[data-method="3card"] {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .draw-grid[data-method="3card"] .tarot-card {
+        padding: 5%; /* Less padding so image is bigger */
+    }
+    
+    .draw-grid[data-method="3card"] .card-name {
+        font-size: 0.7rem;
+    }
+    
+    .draw-grid[data-method="3card"] .card-role {
+        font-size: 0.6rem;
+    }
+}
+
 /* Specific Layouts using Explicit CSS Grid */
 .draw-grid[data-method="spiritual"] {
     grid-template-columns: repeat(5, minmax(0, 160px));
