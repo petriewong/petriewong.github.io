@@ -30,7 +30,7 @@ function initDeck() {
             nameKey: `major_${index}`, // Store translation key
             type: 'major',
             icon: '✨',
-            image: `images/m${String(index).padStart(2, '0')}.jpg`
+            image: `images/traditional/m${String(index).padStart(2, '0')}.jpg`
         });
     });
 
@@ -45,7 +45,7 @@ function initDeck() {
                 suitKey: `suit_${suit.name.toLowerCase()}`,
                 type: 'minor',
                 icon: suit.icon,
-                image: `images/${suitChar}${imgNum}.jpg`
+                image: `images/traditional/${suitChar}${imgNum}.jpg`
             });
         });
     });
@@ -53,10 +53,12 @@ function initDeck() {
 
 // --- State ---
 let currentDraw = [];
+let currentStyle = 'traditional';
 
 // --- DOM Elements ---
 const drawBtn = document.getElementById('draw-btn');
 const methodSelect = document.getElementById('method-select');
+const styleSwitch = document.getElementById('style-switch');
 const drawSection = document.getElementById('draw-section');
 const userQuestionEl = document.getElementById('user-question');
 
@@ -198,7 +200,23 @@ function displayCards(cards) {
             el.querySelector('.card-suitIcon').textContent = card.icon;
             
             const imgEl = el.querySelector('.card-image');
-            imgEl.src = card.image;
+            
+            // Determine image path based on style
+            let imagePath = card.image; // default is 'images/traditional/...'
+            if (currentStyle === 'anime') {
+                imagePath = card.image.replace('images/traditional/', 'images/anime/');
+            }
+            imgEl.src = imagePath;
+            
+            // Fallback handling
+            imgEl.onerror = function() {
+                // If loading anime failed, fallback to traditional
+                if (this.src !== card.image) {
+                    this.src = card.image;
+                }
+                // clear the handler to prevent infinite loops
+                this.onerror = null; 
+            };
             
             const translatedName = getTranslatedCardName(card);
             imgEl.alt = translatedName;
@@ -504,12 +522,33 @@ langSwitch.addEventListener('change', (e) => {
     setLanguage(e.target.value);
 });
 
+styleSwitch.addEventListener('change', (e) => {
+    currentStyle = e.target.value;
+    try {
+        localStorage.setItem('tarotBridgeStyle', currentStyle);
+    } catch (err) {}
+    if (currentDraw.length > 0) {
+        displayCards(currentDraw);
+    }
+});
+
 // Initialize on Load
 function initApp() {
     initDeck();
+    
     const loadedLang = getSavedLanguage();
     langSwitch.value = loadedLang;
     setLanguage(loadedLang);
+    
+    // Load saved style
+    try {
+        const savedStyle = localStorage.getItem('tarotBridgeStyle');
+        if (savedStyle === 'traditional' || savedStyle === 'anime') {
+            currentStyle = savedStyle;
+            styleSwitch.value = currentStyle;
+        }
+    } catch (err) {}
+    
     updateDrawButtonText();
     updateMethodDetails();
 }
