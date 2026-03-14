@@ -1,4 +1,4 @@
-// Version: 1.1.7
+// Version: 1.1.8
 // --- Deck Data ---
 const suits = [
     { name: 'Wands', icon: '🔥' },
@@ -267,7 +267,7 @@ function displayCards(cards) {
 drawBtn.addEventListener('click', drawCards);
 
 // --- Bridge Feature (Prompt Generation) ---
-function generatePrompt(question, cards) {
+function generatePrompt(question, cards, saveToJournal = true) {
     if (cards.length === 0) return;
     
     const getCardNameWithOrientation = (card) => {
@@ -304,7 +304,7 @@ function generatePrompt(question, cards) {
     promptDisplay.textContent = generatedPromptText;
     promptSection.classList.remove('hidden');
     
-    if (typeof saveReading === 'function') {
+    if (saveToJournal && typeof saveReading === 'function') {
         saveReading(question, cards);
     }
 }
@@ -523,7 +523,7 @@ function restoreReading(id) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (typeof generatePrompt === 'function') {
-        generatePrompt(reading.question, currentDraw);
+        generatePrompt(reading.question, currentDraw, false); // Do not save duplicate entry
     }
 }
 
