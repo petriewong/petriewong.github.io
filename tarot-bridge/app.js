@@ -1,4 +1,4 @@
-// Version: 1.1.3
+// Version: 1.1.4
 // --- Deck Data ---
 const suits = [
     { name: 'Wands', icon: '🔥' },
@@ -63,6 +63,17 @@ const drawSection = document.getElementById('draw-section');
 const userQuestionEl = document.getElementById('user-question');
 
 const cardElements = document.querySelectorAll('.tarot-card');
+
+// --- New Features Elements ---
+const tabReading = document.getElementById('tab-reading');
+const tabGallery = document.getElementById('tab-gallery');
+const viewReading = document.getElementById('view-reading');
+const viewGallery = document.getElementById('view-gallery');
+const galleryGrid = document.getElementById('gallery-grid');
+
+const cardModal = document.getElementById('card-modal');
+const modalImage = document.getElementById('modal-image');
+const modalClose = document.querySelector('.modal-close');
 
 let generatedPromptText = '';
 const promptSection = document.getElementById('prompt-section');
@@ -516,6 +527,9 @@ function updateDynamicLanguage() {
     }
     renderJournal();
     updateMethodDetails();
+    if (viewGallery && viewGallery.classList.contains('active')) {
+        renderGallery();
+    }
 }
 
 langSwitch.addEventListener('change', (e) => {
@@ -530,11 +544,48 @@ styleSwitch.addEventListener('change', (e) => {
     if (currentDraw.length > 0) {
         displayCards(currentDraw);
     }
+    if (viewGallery && viewGallery.classList.contains('active')) {
+        renderGallery();
+    }
 });
 
 // Initialize on Load
 function initApp() {
     initDeck();
+    
+    // Tab event listeners
+    if (tabReading && tabGallery) {
+        tabReading.addEventListener('click', () => switchTab('reading'));
+        tabGallery.addEventListener('click', () => switchTab('gallery'));
+    }
+    
+    // Modal event listeners (delegated on document for cards)
+    document.addEventListener('click', (e) => {
+        const cardEl = e.target.closest('.tarot-card');
+        if (cardEl) {
+            const img = cardEl.querySelector('.card-image');
+            const imgSrc = img ? img.getAttribute('src') : null;
+            if (imgSrc && img.style.display !== 'none') {
+                const parentTransform = window.getComputedStyle(cardEl).transform;
+                const imgTransform = window.getComputedStyle(img).transform;
+                
+                let combinedTransform = '';
+                if (parentTransform && parentTransform !== 'none') combinedTransform += parentTransform + ' ';
+                if (imgTransform && imgTransform !== 'none') combinedTransform += imgTransform;
+                
+                openModal(imgSrc, combinedTransform.trim());
+            }
+        }
+    });
+    
+    if (modalClose && cardModal) {
+        modalClose.addEventListener('click', closeModal);
+        cardModal.addEventListener('click', (e) => {
+            if (e.target === cardModal) {
+                closeModal();
+            }
+        });
+    }
     
     const loadedLang = getSavedLanguage();
     langSwitch.value = loadedLang;
@@ -607,6 +658,118 @@ function updateDrawButtonText() {
     } else {
         drawBtn.textContent = t('draw_btn_3');
     }
+}
+
+// --- Tabs & Gallery Logic ---
+function switchTab(tabId) {
+    if (tabId === 'reading') {
+        tabReading.classList.add('active');
+        tabGallery.classList.remove('active');
+        viewReading.classList.add('active');
+        viewGallery.classList.remove('active');
+    } else if (tabId === 'gallery') {
+        tabGallery.classList.add('active');
+        tabReading.classList.remove('active');
+        viewGallery.classList.add('active');
+        viewReading.classList.remove('active');
+        renderGallery();
+    }
+}
+
+function renderGallery() {
+    galleryGrid.innerHTML = ''; // clear
+    
+    const getCatTitle = (key, fallback) => {
+        const val = t(key);
+        return val === key ? fallback : val;
+    };
+    
+    // Group cards by category
+    const categories = {
+        'major': { title: getCatTitle('cat_major', 'Major Arcana'), cards: [] },
+        'wands': { title: getCatTitle('cat_wands', 'Suit of Wands'), cards: [] },
+        'cups': { title: getCatTitle('cat_cups', 'Suit of Cups'), cards: [] },
+        'swords': { title: getCatTitle('cat_swords', 'Suit of Swords'), cards: [] },
+        'pentacles': { title: getCatTitle('cat_pentacles', 'Suit of Pentacles'), cards: [] }
+    };
+    
+    tarotDeck.forEach(card => {
+        if (card.id.startsWith('major')) categories.major.cards.push(card);
+        else if (card.id.startsWith('minor-wands')) categories.wands.cards.push(card);
+        else if (card.id.startsWith('minor-cups')) categories.cups.cards.push(card);
+        else if (card.id.startsWith('minor-swords')) categories.swords.cards.push(card);
+        else if (card.id.startsWith('minor-pentacles')) categories.pentacles.cards.push(card);
+    });
+    
+    Object.values(categories).forEach(cat => {
+        if (cat.cards.length === 0) return;
+        
+        const sectionEl = document.createElement('div');
+        sectionEl.className = 'gallery-category';
+        
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = cat.title;
+        titleEl.className = 'gallery-category-title';
+        sectionEl.appendChild(titleEl);
+        
+        const gridEl = document.createElement('div');
+        gridEl.className = 'gallery-grid-inner';
+        
+        cat.cards.forEach(card => {
+            const el = document.createElement('div');
+            el.className = 'tarot-card';
+            // Add animation class explicitly so they fade in
+            el.classList.add('tarot-card-animating');
+            el.style.display = 'flex'; // Ensure block display context
+            
+            const img = document.createElement('img');
+            img.className = 'card-image';
+            
+            let imagePath = card.image;
+            if (currentStyle === 'anime') {
+                imagePath = card.image.replace('images/traditional/', 'images/anime/');
+            }
+            img.src = imagePath;
+            
+            img.onerror = function() {
+                if (this.src !== card.image) {
+                    this.src = card.image;
+                }
+                this.onerror = null; 
+            };
+            
+            const translatedName = getTranslatedCardName(card);
+            img.alt = translatedName;
+            
+            const nameContainer = document.createElement('div');
+            nameContainer.className = 'card-name-container';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'card-name';
+            nameSpan.textContent = translatedName;
+            
+            nameContainer.appendChild(nameSpan);
+            el.appendChild(img);
+            el.appendChild(nameContainer);
+            
+            gridEl.appendChild(el);
+        });
+        
+        sectionEl.appendChild(gridEl);
+        galleryGrid.appendChild(sectionEl);
+    });
+}
+
+function openModal(imgSrc, transformStr = '') {
+    modalImage.src = imgSrc;
+    modalImage.style.transform = transformStr;
+    cardModal.classList.remove('hidden');
+}
+
+function closeModal() {
+    cardModal.classList.add('hidden');
+    // small delay before clearing src so that fade out looks okay
+    setTimeout(() => { modalImage.src = ''; }, 300);
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
