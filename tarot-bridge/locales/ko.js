@@ -271,5 +271,21 @@ window.translations['ko'] = {
     "major_19": "태양",
     "major_20": "심판",
     "major_21": "세계",
-    "minor_format": "{suit}{rank}"
+    "minor_format": "{suit}{rank}",
+    "deck_tarot": "타로 (78장)",
+    "role_len_1": "카드 1",
+    "role_len_2": "카드 2",
+    "role_len_3": "카드 3",
+    "deck_lenormand": "르노르망 카드 (36장)",
+    "method_lenormand_3": "르노르망 3카드",
+    "desc_lenormand_3": "르노르망 카드를 사용한 전통적인 3카드 스프레드입니다.",
+    "tags_lenormand_3": "빠른 통찰력, 실용적, 순서",
+    "prompt_template_lenormand": "르노르망 리딩 결과입니다。\n\n질문: \"{question}\"\n스프레드: {method}\n뽑은 카드: {cards}\n\n전통적인 르노르망 의미를 바탕으로 카드 조합을 해석해주세요。",
+    "lenormand_1": "기수 (Rider)", "lenormand_2": "클로버 (Clover)", "lenormand_3": "배 (Ship)", "lenormand_4": "집 (House)", "lenormand_5": "나무 (Tree)",
+    "lenormand_6": "구름 (Clouds)", "lenormand_7": "뱀 (Snake)", "lenormand_8": "관 (Coffin)", "lenormand_9": "꽃다발 (Bouquet)", "lenormand_10": "낫 (Scythe)",
+    "lenormand_11": "채찍 (Whip)", "lenormand_12": "새 (Birds)", "lenormand_13": "아이 (Child)", "lenormand_14": "여우 (Fox)", "lenormand_15": "곰 (Bear)",
+    "lenormand_16": "별 (Stars)", "lenormand_17": "황새 (Stork)", "lenormand_18": "개 (Dog)", "lenormand_19": "탑 (Tower)", "lenormand_20": "정원 (Garden)",
+    "lenormand_21": "산 (Mountain)", "lenormand_22": "길 (Crossroads)", "lenormand_23": "쥐 (Mice)", "lenormand_24": "심장 (Heart)", "lenormand_25": "반지 (Ring)",
+    "lenormand_26": "책 (Book)", "lenormand_27": "편지 (Letter)", "lenormand_28": "신사 (Man)", "lenormand_29": "숙녀 (Woman)", "lenormand_30": "백합 (Lily)",
+    "lenormand_31": "태양 (Sun)", "lenormand_32": "달 (Moon)", "lenormand_33": "열쇠 (Key)", "lenormand_34": "물고기 (Fish)", "lenormand_35": "닻 (Anchor)", "lenormand_36": "십자가 (Cross)"
 };

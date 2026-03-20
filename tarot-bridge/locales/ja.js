@@ -271,5 +271,21 @@ window.translations['ja'] = {
     "major_19": "太陽",
     "major_20": "審判",
     "major_21": "世界",
-    "minor_format": "{suit}{rank}"
+    "minor_format": "{suit}{rank}",
+    "deck_tarot": "タロット (78枚)",
+    "role_len_1": "カード 1",
+    "role_len_2": "カード 2",
+    "role_len_3": "カード 3",
+    "deck_lenormand": "ルノルマンカード (36枚)",
+    "method_lenormand_3": "ルノルマン3枚引き",
+    "desc_lenormand_3": "ルノルマンカードを使ったクラシックな3枚引きです。",
+    "tags_lenormand_3": "素早い洞察, 実用的, 順序",
+    "prompt_template_lenormand": "ルノルマンのリーディング結果です。\n\n質問: 「{question}」\nスプレッド: {method}\n引いたカード: {cards}\n\n伝統的なルノルマンの意味に基づいて、これらのカードを組み合わせて解釈してください。",
+    "lenormand_1": "騎士 (Rider)", "lenormand_2": "クローバー (Clover)", "lenormand_3": "船 (Ship)", "lenormand_4": "家 (House)", "lenormand_5": "木 (Tree)",
+    "lenormand_6": "雲 (Clouds)", "lenormand_7": "蛇 (Snake)", "lenormand_8": "棺 (Coffin)", "lenormand_9": "花束 (Bouquet)", "lenormand_10": "鎌 (Scythe)",
+    "lenormand_11": "鞭 (Whip)", "lenormand_12": "鳥 (Birds)", "lenormand_13": "子供 (Child)", "lenormand_14": "狐 (Fox)", "lenormand_15": "熊 (Bear)",
+    "lenormand_16": "星 (Stars)", "lenormand_17": "コウノトリ (Stork)", "lenormand_18": "犬 (Dog)", "lenormand_19": "塔 (Tower)", "lenormand_20": "庭園 (Garden)",
+    "lenormand_21": "山 (Mountain)", "lenormand_22": "道 (Crossroads)", "lenormand_23": "ネズミ (Mice)", "lenormand_24": "ハート (Heart)", "lenormand_25": "指輪 (Ring)",
+    "lenormand_26": "本 (Book)", "lenormand_27": "手紙 (Letter)", "lenormand_28": "紳士 (Man)", "lenormand_29": "淑女 (Woman)", "lenormand_30": "百合 (Lily)",
+    "lenormand_31": "太陽 (Sun)", "lenormand_32": "月 (Moon)", "lenormand_33": "鍵 (Key)", "lenormand_34": "魚 (Fish)", "lenormand_35": "錨 (Anchor)", "lenormand_36": "十字架 (Cross)"
 };

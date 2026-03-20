@@ -271,5 +271,25 @@ window.translations['zh-TW'] = {
     "major_19": "太陽",
     "major_20": "審判",
     "major_21": "世界",
-    "minor_format": "{suit}{rank}"
+    "minor_format": "{suit}{rank}",
+
+    // --- Lenormand integration ---
+    "deck_tarot": "塔羅牌 (78 張)",
+    "deck_lenormand": "雷諾曼卡 (36 張)",
+    "method_lenormand_3": "三張雷諾曼組合",
+    "desc_lenormand_3": "經典的雷諾曼三張牌陣，請將卡片視為一個句子或連續的組合來解讀。",
+    "tags_lenormand_3": "快速指引, 實際建議, 關聯組合",
+    "role_len_1": "第一張",
+    "role_len_2": "第二張",
+    "role_len_3": "第三張",
+    "prompt_template_lenormand": "這是我剛剛抽的雷諾曼卡陣。\n\n我的問題：\"{question}\"\n使用的牌陣：{method}\n抽到的卡牌：{cards}\n\n請根據傳統雷諾曼卡的含義為我解讀。",
+
+    // Lenormand Cards (1-36)
+    "lenormand_1": "騎士 (Rider)", "lenormand_2": "幸運草 (Clover)", "lenormand_3": "船 (Ship)", "lenormand_4": "房屋 (House)", "lenormand_5": "樹 (Tree)",
+    "lenormand_6": "雲 (Clouds)", "lenormand_7": "蛇 (Snake)", "lenormand_8": "棺材 (Coffin)", "lenormand_9": "花束 (Bouquet)", "lenormand_10": "鐮刀 (Scythe)",
+    "lenormand_11": "鞭子 (Whip)", "lenormand_12": "鳥 (Birds)", "lenormand_13": "小孩 (Child)", "lenormand_14": "狐狸 (Fox)", "lenormand_15": "熊 (Bear)",
+    "lenormand_16": "星星 (Stars)", "lenormand_17": "鸛鳥 (Stork)", "lenormand_18": "狗 (Dog)", "lenormand_19": "塔 (Tower)", "lenormand_20": "花園 (Garden)",
+    "lenormand_21": "山 (Mountain)", "lenormand_22": "十字路口 (Crossroads)", "lenormand_23": "老鼠 (Mice)", "lenormand_24": "心 (Heart)", "lenormand_25": "戒指 (Ring)",
+    "lenormand_26": "書 (Book)", "lenormand_27": "信件 (Letter)", "lenormand_28": "男人 (Man)", "lenormand_29": "女人 (Woman)", "lenormand_30": "百合 (Lily)",
+    "lenormand_31": "太陽 (Sun)", "lenormand_32": "月亮 (Moon)", "lenormand_33": "鑰匙 (Key)", "lenormand_34": "魚 (Fish)", "lenormand_35": "錨 (Anchor)", "lenormand_36": "十字架 (Cross)"
 };

@@ -271,5 +271,25 @@ window.translations['en'] = {
     "major_19": "The Sun",
     "major_20": "Judgement",
     "major_21": "The World",
-    "minor_format": "{rank} of {suit}"
+    "minor_format": "{rank} of {suit}",
+
+    // --- Lenormand integration ---
+    "deck_tarot": "Tarot (78 Cards)",
+    "deck_lenormand": "Lenormand (36 Cards)",
+    "method_lenormand_3": "3-Card Lenormand",
+    "desc_lenormand_3": "A classic 3-card spread using the Lenormand deck.",
+    "tags_lenormand_3": "Quick Insight, Practical, Sequence",
+    "role_len_1": "Card 1",
+    "role_len_2": "Card 2",
+    "role_len_3": "Card 3",
+    "prompt_template_lenormand": "Here is my Lenormand reading result.\n\nQuestion: \"{question}\"\nSpread: {method}\nCards Drawn: {cards}\n\nPlease interpret these cards as a combination based on traditional Lenormand meanings.",
+
+    // Lenormand Cards (1-36)
+    "lenormand_1": "Rider", "lenormand_2": "Clover", "lenormand_3": "Ship", "lenormand_4": "House", "lenormand_5": "Tree",
+    "lenormand_6": "Clouds", "lenormand_7": "Snake", "lenormand_8": "Coffin", "lenormand_9": "Bouquet", "lenormand_10": "Scythe",
+    "lenormand_11": "Whip", "lenormand_12": "Birds", "lenormand_13": "Child", "lenormand_14": "Fox", "lenormand_15": "Bear",
+    "lenormand_16": "Stars", "lenormand_17": "Stork", "lenormand_18": "Dog", "lenormand_19": "Tower", "lenormand_20": "Garden",
+    "lenormand_21": "Mountain", "lenormand_22": "Crossroads", "lenormand_23": "Mice", "lenormand_24": "Heart", "lenormand_25": "Ring",
+    "lenormand_26": "Book", "lenormand_27": "Letter", "lenormand_28": "Man", "lenormand_29": "Woman", "lenormand_30": "Lily",
+    "lenormand_31": "Sun", "lenormand_32": "Moon", "lenormand_33": "Key", "lenormand_34": "Fish", "lenormand_35": "Anchor", "lenormand_36": "Cross"
 };

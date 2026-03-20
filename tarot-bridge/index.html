@@ -13,9 +13,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="version-label">v1.1.8</div>
+    <div class="version-label">v1.1.9</div>
     
     <div class="lang-selector">
+        <select id="deck-switch" style="margin-right: 8px;">
+            <option value="tarot" data-i18n="deck_tarot">Tarot (78 Cards)</option>
+            <option value="lenormand" data-i18n="deck_lenormand">Lenormand (36 Cards)</option>
+        </select>
         <select id="style-switch" style="margin-right: 8px;">
             <option value="traditional" data-i18n="style_traditional">Traditional</option>
             <option value="anime" data-i18n="style_anime">Anime</option>
@@ -46,27 +50,7 @@
             <h2 data-i18n="method_label">Method:</h2>
             <div class="input-group" style="margin-bottom: 0.5rem;">
                 <select id="method-select" class="method-selector">
-                    <option value="3card" data-i18n="method_3card">3-Card Draw (Past/Present/Future)</option>
-                    <option value="single" data-i18n="method_1card">Single Card (Card of the Day)</option>
-                    <option value="spiritual" data-i18n="method_spiritual">Spiritual Spread</option>
-                    <option value="celtic" data-i18n="method_celtic">Celtic Cross Spread</option>
-                    <option value="self_awareness" data-i18n="method_self_awareness">Self Awareness Spread</option>
-                    <option value="linear5" data-i18n="method_linear5">Five-Card Linear Spread</option>
-                    <option value="cross5" data-i18n="method_cross5">Five-Card Cross Spread</option>
-                    <option value="decision" data-i18n="method_decision">Decision Making Spread</option>
-                    <option value="fullmoon" data-i18n="method_fullmoon">Full Moon Spread</option>
-                    <option value="newmoon" data-i18n="method_newmoon">New Moon Spread</option>
-                    <option value="manifestation" data-i18n="method_manifestation">Daily Manifestation Spread</option>
-                    <option value="path" data-i18n="method_path">The Path Spread</option>
-                    <option value="feelings" data-i18n="method_feelings">Catching Feelings Spread</option>
-                    <option value="pyramids" data-i18n="method_pyramids">The Three Pyramids</option>
-                    <option value="horseshoe" data-i18n="method_horseshoe">Horseshoe Spread</option>
-                    <option value="relationship" data-i18n="method_relationship">Relationship Mirror</option>
-                    <option value="akashic" data-i18n="method_akashic">Akashic Records Spread</option>
-                    <option value="chakra" data-i18n="method_chakra">Chakra Spread</option>
-                    <option value="checkin" data-i18n="method_checkin">Relationship Check-In Spread</option>
-                    <option value="futureself" data-i18n="method_futureself">My Future Self Spread</option>
-                    <option value="astrological" data-i18n="method_astrological">Astrological Wheel Spread</option>
+                    <!-- Options populated dynamically by app.js based on window.TarotSpreads -->
                 </select>
             </div>
             
@@ -248,6 +232,28 @@
     <script src="locales/ja.js"></script>
     <script src="locales/ko.js"></script>
     <script src="i18n.js"></script>
+    <script src="spreads/3card.js"></script>
+    <script src="spreads/akashic.js"></script>
+    <script src="spreads/astrological.js"></script>
+    <script src="spreads/celtic.js"></script>
+    <script src="spreads/chakra.js"></script>
+    <script src="spreads/checkin.js"></script>
+    <script src="spreads/cross5.js"></script>
+    <script src="spreads/decision.js"></script>
+    <script src="spreads/feelings.js"></script>
+    <script src="spreads/fullmoon.js"></script>
+    <script src="spreads/futureself.js"></script>
+    <script src="spreads/horseshoe.js"></script>
+    <script src="spreads/lenormand_3.js"></script>
+    <script src="spreads/linear5.js"></script>
+    <script src="spreads/manifestation.js"></script>
+    <script src="spreads/newmoon.js"></script>
+    <script src="spreads/path.js"></script>
+    <script src="spreads/pyramids.js"></script>
+    <script src="spreads/relationship.js"></script>
+    <script src="spreads/self_awareness.js"></script>
+    <script src="spreads/single.js"></script>
+    <script src="spreads/spiritual.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

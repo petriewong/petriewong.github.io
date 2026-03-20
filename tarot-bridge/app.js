@@ -1,4 +1,4 @@
-// Version: 1.1.8
+// Version: 1.1.9
 // --- Deck Data ---
 const suits = [
     { name: 'Wands', icon: '🔥' },
@@ -20,6 +20,7 @@ const majorArcanaNames = [
 ];
 
 let tarotDeck = [];
+let lenormandDeck = [];
 
 function initDeck() {
     tarotDeck = [];
@@ -30,7 +31,7 @@ function initDeck() {
             nameKey: `major_${index}`, // Store translation key
             type: 'major',
             icon: '✨',
-            image: `images/traditional/m${String(index).padStart(2, '0')}.jpg`
+            image: `images/traditional/tarot/m${String(index).padStart(2, '0')}.jpg`
         });
     });
 
@@ -45,8 +46,29 @@ function initDeck() {
                 suitKey: `suit_${suit.name.toLowerCase()}`,
                 type: 'minor',
                 icon: suit.icon,
-                image: `images/traditional/${suitChar}${imgNum}.jpg`
+                image: `images/traditional/tarot/${suitChar}${imgNum}.jpg`
             });
+        });
+    });
+}
+
+function initLenormandDeck() {
+    lenormandDeck = [];
+    const lenormandNames = [
+        'Rider', 'Clover', 'Ship', 'House', 'Tree', 'Clouds', 'Snake', 'Coffin', 'Bouquet', 'Scythe',
+        'Whip', 'Birds', 'Child', 'Fox', 'Bear', 'Stars', 'Stork', 'Dog', 'Tower', 'Garden',
+        'Mountain', 'Crossroads', 'Mice', 'Heart', 'Ring', 'Book', 'Letter', 'Man', 'Woman', 'Lily',
+        'Sun', 'Moon', 'Key', 'Fish', 'Anchor', 'Cross'
+    ];
+    
+    lenormandNames.forEach((name, index) => {
+        const num = index + 1;
+        lenormandDeck.push({
+            id: `lenormand-${num}`,
+            nameKey: `lenormand_${num}`,
+            type: 'lenormand',
+            icon: '📜',
+            image: `images/traditional/lenormand/${String(num).padStart(2, '0')}.jpg`
         });
     });
 }
@@ -87,6 +109,8 @@ const langSwitch = document.getElementById('lang-switch');
 function getTranslatedCardName(card) {
     if (card.type === 'major') {
         return t(card.nameKey);
+    } else if (card.type === 'lenormand') {
+        return t(card.nameKey);
     } else {
         return t_replace('minor_format', { rank: t(card.rankKey), suit: t(card.suitKey) });
     }
@@ -102,34 +126,42 @@ function drawCards() {
     }
 
     const method = methodSelect.value;
-    let drawCount = 3;
-    if (method === 'single') drawCount = 1;
-    else if (method === 'spiritual') drawCount = 9;
-    else if (method === 'celtic') drawCount = 10;
-    else if (method === 'self_awareness') drawCount = 3;
-    else if (method === 'linear5') drawCount = 5;
-    else if (method === 'cross5') drawCount = 5;
-    else if (method === 'decision') drawCount = 5;
-    else if (method === 'fullmoon') drawCount = 5;
-    else if (method === 'newmoon') drawCount = 5;
-    else if (method === 'manifestation') drawCount = 4;
-    else if (method === 'path') drawCount = 4;
-    else if (method === 'feelings') drawCount = 6;
-    else if (method === 'pyramids') drawCount = 6;
-    else if (method === 'horseshoe') drawCount = 7;
-    else if (method === 'relationship') drawCount = 7;
-    else if (method === 'akashic') drawCount = 7;
-    else if (method === 'chakra') drawCount = 7;
-    else if (method === 'checkin') drawCount = 8;
-    else if (method === 'futureself') drawCount = 9;
-    else if (method === 'astrological') drawCount = 12;
+    const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
+    
+    // Fallback if spreads not loaded yet or config missing
+    if (!spreadConfig) {
+        console.error("Spread config missing for:", method);
+        return;
+    }
 
-    // Shuffle and pick unique cards
-    const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
-    currentDraw = shuffled.slice(0, drawCount).map(card => ({
-        ...card,
-        isReversed: Math.random() < 0.5 // 50/50 chance
-    }));
+    // Prepare shuffled pools
+    const shuffledTarot = [...tarotDeck].sort(() => 0.5 - Math.random());
+    const shuffledLenormand = [...lenormandDeck].sort(() => 0.5 - Math.random());
+    
+    let tarotIndex = 0;
+    let lenormandIndex = 0;
+
+    currentDraw = spreadConfig.slots.map(slot => {
+        let selectedCard;
+        let isReversed = false;
+        
+        if (slot.pool === 'tarot') {
+            selectedCard = shuffledTarot[tarotIndex++];
+            isReversed = Math.random() < 0.5; // 50/50 chance for Tarot
+        } else if (slot.pool === 'lenormand') {
+            selectedCard = shuffledLenormand[lenormandIndex++];
+            isReversed = false; // Never reversed
+        } else {
+            // fallback
+            selectedCard = shuffledTarot[tarotIndex++];
+        }
+        
+        return {
+            ...selectedCard,
+            isReversed: isReversed,
+            roleKey: slot.roleKey
+        };
+    });
     
     // Update DOM visually
     displayCards(currentDraw);
@@ -144,48 +176,12 @@ function drawCards() {
 }
 
 function getRoleKey(method, index) {
-    if (method === '3card') {
-        if (index === 0) return 'role_past';
-        if (index === 1) return 'role_present';
-        if (index === 2) return 'role_future';
-    } else if (method === 'spiritual') {
-        return `role_spiritual_${index + 1}`;
-    } else if (method === 'celtic') {
-        return `role_celtic_${index + 1}`;
-    } else if (method === 'self_awareness') {
-        return `role_self_${index + 1}`;
-    } else if (method === 'linear5') {
-        return `role_lin5_${index + 1}`;
-    } else if (method === 'cross5') {
-        return `role_cross5_${index + 1}`;
-    } else if (method === 'decision') {
-        return `role_dec_${index + 1}`;
-    } else if (method === 'fullmoon') {
-        return `role_fm_${index + 1}`;
-    } else if (method === 'newmoon') {
-        return `role_nm_${index + 1}`;
-    } else if (method === 'manifestation') {
-        return `role_mani_${index + 1}`;
-    } else if (method === 'path') {
-        return `role_path_${index + 1}`;
-    } else if (method === 'feelings') {
-        return `role_feel_${index + 1}`;
-    } else if (method === 'pyramids') {
-        return `role_pyr_${index + 1}`;
-    } else if (method === 'horseshoe') {
-        return `role_horse_${index + 1}`;
-    } else if (method === 'relationship') {
-        return `role_rel_${index + 1}`;
-    } else if (method === 'akashic') {
-        return `role_aka_${index + 1}`;
-    } else if (method === 'chakra') {
-        return `role_cha_${index + 1}`;
-    } else if (method === 'checkin') {
-        return `role_chk_${index + 1}`;
-    } else if (method === 'futureself') {
-        return `role_future_${index + 1}`;
-    } else if (method === 'astrological') {
-        return `role_astro_${index + 1}`;
+    if (currentDraw[index] && currentDraw[index].roleKey) {
+        return currentDraw[index].roleKey;
+    }
+    const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
+    if (spreadConfig && spreadConfig.slots[index]) {
+        return spreadConfig.slots[index].roleKey;
     }
     return null;
 }
@@ -199,7 +195,7 @@ function displayCards(cards) {
             
             const roleEl = el.querySelector('.card-role');
             if (roleEl) {
-                const roleKey = getRoleKey(method, index);
+                const roleKey = card.roleKey || getRoleKey(method, index);
                 if (roleKey) {
                     roleEl.textContent = t(roleKey);
                     roleEl.style.display = 'block';
@@ -234,7 +230,10 @@ function displayCards(cards) {
             imgEl.style.display = 'block';
             imgEl.style.transform = card.isReversed ? 'rotate(180deg)' : 'none';
 
-            const nameStr = card.isReversed ? `${translatedName} ${t('reversed_suffix')}` : `${translatedName} ${t('upright_suffix')}`;
+            let nameStr = translatedName;
+            if (card.type !== 'lenormand') {
+                nameStr = card.isReversed ? `${translatedName} ${t('reversed_suffix')}` : `${translatedName} ${t('upright_suffix')}`;
+            }
             el.querySelector('.card-name').textContent = nameStr;
             
             if (card.isReversed) {
@@ -272,19 +271,24 @@ function generatePrompt(question, cards, saveToJournal = true) {
     
     const getCardNameWithOrientation = (card) => {
         const name = getTranslatedCardName(card);
+        if (card.type === 'lenormand') return name;
         return card.isReversed ? `${name} ${t('reversed_suffix')}` : `${name} ${t('upright_suffix')}`;
     };
     
     let cardStr = '';
     let promptTemplate = 'prompt_template';
     const method = methodSelect.value;
+    const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
 
     if (method === 'single') {
         cardStr = getCardNameWithOrientation(cards[0]);
         promptTemplate = 'prompt_template_1card';
     } else {
+        if (spreadConfig && spreadConfig.slots && spreadConfig.slots[0].pool === 'lenormand') {
+            promptTemplate = 'prompt_template_lenormand';
+        }
         const cardStrings = cards.map((card, index) => {
-            const roleKey = getRoleKey(method, index);
+            const roleKey = card.roleKey || getRoleKey(method, index);
             if (roleKey) {
                 return `${t(roleKey)}: ${getCardNameWithOrientation(card)}`;
             }
@@ -396,7 +400,8 @@ function saveReading(question, cards) {
             nameKey: c.nameKey,
             rankKey: c.rankKey,
             suitKey: c.suitKey,
-            isReversed: c.isReversed
+            isReversed: c.isReversed,
+            roleKey: c.roleKey
         })) // save structure instead of string to support later translation changes
     };
     
@@ -502,15 +507,22 @@ function restoreReading(id) {
 
     // Map saved data to deck actuals using robust logic
     currentDraw = reading.cards.map(c => {
-        let match = tarotDeck.find(td => td.id === c.id);
-        if(!match && typeof c === 'string') {
-            // Very old string-only fallback logic
-            match = tarotDeck.find(td => getTranslatedCardName(td) === c.replace(' (U)', '').replace(' (R)', ''));
-            return { ...(match || tarotDeck[0]), isReversed: c.includes('(R)') };
+        let match;
+        if (c.type === 'lenormand' || c.id.startsWith('lenormand')) {
+            match = lenormandDeck.find(ld => ld.id === c.id);
+        } else {
+            match = tarotDeck.find(td => td.id === c.id);
+            if(!match && typeof c === 'string') {
+                // Very old string-only fallback logic
+                match = tarotDeck.find(td => getTranslatedCardName(td) === c.replace(' (U)', '').replace(' (R)', ''));
+                return { ...(match || tarotDeck[0]), isReversed: c.includes('(R)') };
+            }
         }
+        
         return {
             ...(match || tarotDeck[0]), // Safe fallback
-            isReversed: c.isReversed
+            isReversed: c.isReversed,
+            roleKey: c.roleKey || null
         };
     });
 
@@ -629,7 +641,39 @@ styleSwitch.addEventListener('change', (e) => {
 // Initialize on Load
 function initApp() {
     initDeck();
+    initLenormandDeck();
     
+    // Populate Method Select from window.TarotSpreads based on deckSwitch
+    const deckSwitch = document.getElementById('deck-switch');
+    function populateMethods() {
+        if (!window.TarotSpreads) return;
+        const currentDeck = deckSwitch ? deckSwitch.value : 'tarot';
+        methodSelect.innerHTML = '';
+        
+        Object.values(window.TarotSpreads).forEach(spread => {
+            if (!spread.slots || spread.slots.length === 0) return;
+            const pool = spread.slots[0].pool || 'tarot';
+            
+            if (pool === currentDeck || pool === 'any') {
+                const opt = document.createElement('option');
+                opt.value = spread.id;
+                opt.setAttribute('data-i18n', spread.nameKey);
+                // Immediately translate if possible, or fallback
+                opt.textContent = (typeof t === 'function') ? t(spread.nameKey) : spread.id;
+                methodSelect.appendChild(opt);
+            }
+        });
+        
+        // Trigger updates when methods change
+        updateMethodDetails();
+        updateDrawButtonText();
+    }
+
+    if (deckSwitch) {
+        deckSwitch.addEventListener('change', populateMethods);
+    }
+    populateMethods();
+
     // Tab event listeners
     if (tabReading && tabGallery) {
         tabReading.addEventListener('click', () => switchTab('reading'));
@@ -686,10 +730,15 @@ function updateMethodDetails() {
     const descEl = document.getElementById('method-desc');
     const tagsEl = document.getElementById('method-tags');
     
-    // Translations keys based on method selected
-    const descKey = `desc_${method}`;
-    const tagsKey = `tags_${method}`;
+    let descKey = `desc_${method}`;
+    let tagsKey = `tags_${method}`;
     
+    const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
+    if (spreadConfig) {
+        descKey = spreadConfig.descKey;
+        tagsKey = spreadConfig.tagsKey;
+    }
+
     // Apply Description
     descEl.textContent = t(descKey);
     
@@ -714,27 +763,20 @@ methodSelect.addEventListener('change', () => {
 
 function updateDrawButtonText() {
     const method = methodSelect.value;
-    if (method === 'single') {
-        drawBtn.textContent = t('draw_btn_1');
-    } else if (method === 'manifestation' || method === 'path') {
-        drawBtn.textContent = t('draw_btn_4') || 'Draw 4 Cards';
-    } else if (method === 'decision' || method === 'linear5' || method === 'cross5' || method === 'fullmoon' || method === 'newmoon') {
-        drawBtn.textContent = t('draw_btn_5');
-    } else if (method === 'feelings' || method === 'pyramids') {
-        drawBtn.textContent = t('draw_btn_6') || 'Draw 6 Cards';
-    } else if (method === 'horseshoe' || method === 'relationship' || method === 'chakra' || method === 'akashic') {
-        drawBtn.textContent = t('draw_btn_7');
-    } else if (method === 'checkin') {
-        drawBtn.textContent = t('draw_btn_8') || 'Draw 8 Cards';
-    } else if (method === 'spiritual' || method === 'futureself') {
-        drawBtn.textContent = t('draw_btn_9');
-    } else if (method === 'celtic') {
-        drawBtn.textContent = t('draw_btn_10');
-    } else if (method === 'astrological') {
-        drawBtn.textContent = t('draw_btn_12') || 'Draw 12 Cards';
-    } else {
-        drawBtn.textContent = t('draw_btn_3');
-    }
+    const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
+    const count = spreadConfig ? spreadConfig.slots.length : 3;
+
+    if (count === 1) drawBtn.textContent = t('draw_btn_1');
+    else if (count === 3) drawBtn.textContent = t('draw_btn_3');
+    else if (count === 4) drawBtn.textContent = t('draw_btn_4') || 'Draw 4 Cards';
+    else if (count === 5) drawBtn.textContent = t('draw_btn_5');
+    else if (count === 6) drawBtn.textContent = t('draw_btn_6') || 'Draw 6 Cards';
+    else if (count === 7) drawBtn.textContent = t('draw_btn_7');
+    else if (count === 8) drawBtn.textContent = t('draw_btn_8') || 'Draw 8 Cards';
+    else if (count === 9) drawBtn.textContent = t('draw_btn_9');
+    else if (count === 10) drawBtn.textContent = t('draw_btn_10');
+    else if (count === 12) drawBtn.textContent = t('draw_btn_12') || 'Draw 12 Cards';
+    else drawBtn.textContent = `Draw ${count} Cards`;
 }
 
 // --- Tabs & Gallery Logic ---
