@@ -1,77 +1,8 @@
-// Version: 1.1.9
-// --- Deck Data ---
-const suits = [
-    { name: 'Wands', icon: '🔥' },
-    { name: 'Cups', icon: '💧' },
-    { name: 'Swords', icon: '🗡️' },
-    { name: 'Pentacles', icon: '🪙' }
-];
-
-const ranks = [
-    'Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-    'Page', 'Knight', 'Queen', 'King'
-];
-
-const majorArcanaNames = [
-    'The Fool', 'The Magician', 'The High Priestess', 'The Empress', 'The Emperor',
-    'The Hierophant', 'The Lovers', 'The Chariot', 'Strength', 'The Hermit',
-    'Wheel of Fortune', 'Justice', 'The Hanged Man', 'Death', 'Temperance',
-    'The Devil', 'The Tower', 'The Star', 'The Moon', 'The Sun', 'Judgement', 'The World'
-];
-
+// Version: 1.1.10
+// --- State ---
+let engine;
 let tarotDeck = [];
 let lenormandDeck = [];
-
-function initDeck() {
-    tarotDeck = [];
-    // Major Arcana
-    majorArcanaNames.forEach((name, index) => {
-        tarotDeck.push({
-            id: `major-${index}`,
-            nameKey: `major_${index}`, // Store translation key
-            type: 'major',
-            icon: '✨',
-            image: `images/traditional/tarot/m${String(index).padStart(2, '0')}.jpg`
-        });
-    });
-
-    // Minor Arcana
-    suits.forEach(suit => {
-        ranks.forEach((rank, i) => {
-            const suitChar = suit.name.charAt(0).toLowerCase();
-            const imgNum = String(i + 1).padStart(2, '0');
-            tarotDeck.push({
-                id: `minor-${suit.name.toLowerCase()}-${i}`,
-                rankKey: `rank_${rank.toLowerCase()}`,
-                suitKey: `suit_${suit.name.toLowerCase()}`,
-                type: 'minor',
-                icon: suit.icon,
-                image: `images/traditional/tarot/${suitChar}${imgNum}.jpg`
-            });
-        });
-    });
-}
-
-function initLenormandDeck() {
-    lenormandDeck = [];
-    const lenormandNames = [
-        'Rider', 'Clover', 'Ship', 'House', 'Tree', 'Clouds', 'Snake', 'Coffin', 'Bouquet', 'Scythe',
-        'Whip', 'Birds', 'Child', 'Fox', 'Bear', 'Stars', 'Stork', 'Dog', 'Tower', 'Garden',
-        'Mountain', 'Crossroads', 'Mice', 'Heart', 'Ring', 'Book', 'Letter', 'Man', 'Woman', 'Lily',
-        'Sun', 'Moon', 'Key', 'Fish', 'Anchor', 'Cross'
-    ];
-    
-    lenormandNames.forEach((name, index) => {
-        const num = index + 1;
-        lenormandDeck.push({
-            id: `lenormand-${num}`,
-            nameKey: `lenormand_${num}`,
-            type: 'lenormand',
-            icon: '📜',
-            image: `images/traditional/lenormand/${String(num).padStart(2, '0')}.jpg`
-        });
-    });
-}
 
 // --- State ---
 let currentDraw = [];
@@ -116,6 +47,26 @@ function getTranslatedCardName(card) {
     }
 }
 
+function getFormattedCardName(card) {
+    const name = getTranslatedCardName(card);
+    if (card.type === 'lenormand') return name;
+    return card.isReversed ? `${name} ${t('reversed_suffix')}` : `${name} ${t('upright_suffix')}`;
+}
+
+function setCardImageSource(imgEl, card) {
+    let imagePath = card.image; // default is 'images/traditional/...'
+    if (currentStyle === 'anime') {
+        imagePath = card.image.replace('images/traditional/', 'images/anime/');
+    }
+    imgEl.src = imagePath;
+    imgEl.onerror = function() {
+        if (this.src !== card.image) {
+            this.src = card.image;
+        }
+        this.onerror = null; 
+    };
+}
+
 // --- Core Mechanics ---
 function drawCards() {
     // Check if question is provided
@@ -125,7 +76,7 @@ function drawCards() {
         return;
     }
 
-    const method = methodSelect.value;
+    const method = methodSelect.dataset.value;
     const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
     
     // Fallback if spreads not loaded yet or config missing
@@ -134,34 +85,14 @@ function drawCards() {
         return;
     }
 
-    // Prepare shuffled pools
-    const shuffledTarot = [...tarotDeck].sort(() => 0.5 - Math.random());
-    const shuffledLenormand = [...lenormandDeck].sort(() => 0.5 - Math.random());
-    
-    let tarotIndex = 0;
-    let lenormandIndex = 0;
-
-    currentDraw = spreadConfig.slots.map(slot => {
-        let selectedCard;
-        let isReversed = false;
-        
-        if (slot.pool === 'tarot') {
-            selectedCard = shuffledTarot[tarotIndex++];
-            isReversed = Math.random() < 0.5; // 50/50 chance for Tarot
-        } else if (slot.pool === 'lenormand') {
-            selectedCard = shuffledLenormand[lenormandIndex++];
-            isReversed = false; // Never reversed
-        } else {
-            // fallback
-            selectedCard = shuffledTarot[tarotIndex++];
-        }
-        
-        return {
-            ...selectedCard,
-            isReversed: isReversed,
-            roleKey: slot.roleKey
-        };
-    });
+    // Draw via Engine
+    try {
+        const engineResult = engine.draw(method, question);
+        currentDraw = engineResult.cards;
+    } catch (e) {
+        console.error("Engine drawing failed:", e);
+        return;
+    }
     
     // Update DOM visually
     displayCards(currentDraw);
@@ -173,6 +104,11 @@ function drawCards() {
     if (typeof generatePrompt === 'function') {
         generatePrompt(question, currentDraw);
     }
+    
+    // Auto-scroll to the drawing section so the user sees the result without manual scrolling
+    setTimeout(() => {
+        drawSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 }
 
 function getRoleKey(method, index) {
@@ -187,7 +123,7 @@ function getRoleKey(method, index) {
 }
 
 function displayCards(cards) {
-    const method = methodSelect.value;
+    const method = methodSelect.dataset.value;
     cardElements.forEach((el, index) => {
         if (index < cards.length) {
             const card = cards[index];
@@ -207,34 +143,14 @@ function displayCards(cards) {
             el.querySelector('.card-suitIcon').textContent = card.icon;
             
             const imgEl = el.querySelector('.card-image');
-            
-            // Determine image path based on style
-            let imagePath = card.image; // default is 'images/traditional/...'
-            if (currentStyle === 'anime') {
-                imagePath = card.image.replace('images/traditional/', 'images/anime/');
-            }
-            imgEl.src = imagePath;
-            
-            // Fallback handling
-            imgEl.onerror = function() {
-                // If loading anime failed, fallback to traditional
-                if (this.src !== card.image) {
-                    this.src = card.image;
-                }
-                // clear the handler to prevent infinite loops
-                this.onerror = null; 
-            };
+            setCardImageSource(imgEl, card);
             
             const translatedName = getTranslatedCardName(card);
             imgEl.alt = translatedName;
             imgEl.style.display = 'block';
             imgEl.style.transform = card.isReversed ? 'rotate(180deg)' : 'none';
 
-            let nameStr = translatedName;
-            if (card.type !== 'lenormand') {
-                nameStr = card.isReversed ? `${translatedName} ${t('reversed_suffix')}` : `${translatedName} ${t('upright_suffix')}`;
-            }
-            el.querySelector('.card-name').textContent = nameStr;
+            el.querySelector('.card-name').textContent = getFormattedCardName(card);
             
             if (card.isReversed) {
                 el.classList.add('reversed');
@@ -269,19 +185,13 @@ drawBtn.addEventListener('click', drawCards);
 function generatePrompt(question, cards, saveToJournal = true) {
     if (cards.length === 0) return;
     
-    const getCardNameWithOrientation = (card) => {
-        const name = getTranslatedCardName(card);
-        if (card.type === 'lenormand') return name;
-        return card.isReversed ? `${name} ${t('reversed_suffix')}` : `${name} ${t('upright_suffix')}`;
-    };
-    
     let cardStr = '';
     let promptTemplate = 'prompt_template';
-    const method = methodSelect.value;
+    const method = methodSelect.dataset.value;
     const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
 
     if (method === 'single') {
-        cardStr = getCardNameWithOrientation(cards[0]);
+        cardStr = getFormattedCardName(cards[0]);
         promptTemplate = 'prompt_template_1card';
     } else {
         if (spreadConfig && spreadConfig.slots && spreadConfig.slots[0].pool === 'lenormand') {
@@ -290,9 +200,9 @@ function generatePrompt(question, cards, saveToJournal = true) {
         const cardStrings = cards.map((card, index) => {
             const roleKey = card.roleKey || getRoleKey(method, index);
             if (roleKey) {
-                return `${t(roleKey)}: ${getCardNameWithOrientation(card)}`;
+                return `${t(roleKey)}: ${getFormattedCardName(card)}`;
             }
-            return getCardNameWithOrientation(card); // fallback
+            return getFormattedCardName(card); // fallback
         });
         cardStr = cardStrings.join(', ');
     }
@@ -393,7 +303,7 @@ function saveReading(question, cards) {
         id: Date.now().toString(),
         date: new Date().toISOString(),
         question: question,
-        method: methodSelect.value,
+        method: methodSelect.dataset.value,
         cards: cards.map(c => ({
             id: c.id,
             type: c.type,
@@ -431,8 +341,7 @@ function renderJournal() {
         // handle both old string format and new object format for backward compatibility
         const cardStrings = r.cards.map(c => {
             if (typeof c === 'string') return c; 
-            const name = getTranslatedCardName(c);
-            return c.isReversed ? `${name} ${t('reversed_suffix')}` : `${name} ${t('upright_suffix')}`;
+            return getFormattedCardName(c);
         });
 
         return `
@@ -502,7 +411,7 @@ function restoreReading(id) {
 
     // Set form fields
     document.getElementById('user-question').value = reading.question;
-    methodSelect.value = method;
+    methodSelect.dataset.value = method;
     methodSelect.dispatchEvent(new Event('change')); // Update details and UI buttons
 
     // Map saved data to deck actuals using robust logic
@@ -621,57 +530,90 @@ function updateDynamicLanguage() {
     }
 }
 
-langSwitch.addEventListener('change', (e) => {
-    setLanguage(e.target.value);
+// Custom Segmented Control click handlers
+function setupSegmentedControl(id, callback) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('click', (e) => {
+        const btn = e.target.closest('.segment-btn, .method-card');
+        if(!btn || !el.contains(btn)) return;
+        
+        // Remove active class from siblings
+        Array.from(el.children).forEach(child => child.classList.remove('active'));
+        btn.classList.add('active');
+        el.dataset.value = btn.dataset.value;
+        if(callback) callback(btn.dataset.value);
+    });
+}
+
+setupSegmentedControl('lang-switch', (val) => {
+    setLanguage(val);
 });
 
-styleSwitch.addEventListener('change', (e) => {
-    currentStyle = e.target.value;
-    try {
-        localStorage.setItem('tarotBridgeStyle', currentStyle);
-    } catch (err) {}
-    if (currentDraw.length > 0) {
-        displayCards(currentDraw);
-    }
-    if (viewGallery && viewGallery.classList.contains('active')) {
-        renderGallery();
-    }
+setupSegmentedControl('style-switch', (val) => {
+    currentStyle = val;
+    try { localStorage.setItem('tarotBridgeStyle', currentStyle); } catch (err) {}
+    if (currentDraw.length > 0) displayCards(currentDraw);
+    if (viewGallery && viewGallery.classList.contains('active')) renderGallery();
 });
 
 // Initialize on Load
 function initApp() {
-    initDeck();
-    initLenormandDeck();
+    engine = new TarotEngine(window.Decks, window.TarotSpreads);
+    if (window.Decks['tarot']) tarotDeck = window.Decks['tarot'].cards;
+    if (window.Decks['lenormand']) lenormandDeck = window.Decks['lenormand'].cards;
     
     // Populate Method Select from window.TarotSpreads based on deckSwitch
     const deckSwitch = document.getElementById('deck-switch');
     function populateMethods() {
         if (!window.TarotSpreads) return;
-        const currentDeck = deckSwitch ? deckSwitch.value : 'tarot';
+        const currentDeck = deckSwitch ? deckSwitch.dataset.value : 'tarot';
         methodSelect.innerHTML = '';
         
+        let firstRendered = false;
         Object.values(window.TarotSpreads).forEach(spread => {
             if (!spread.slots || spread.slots.length === 0) return;
             const pool = spread.slots[0].pool || 'tarot';
             
             if (pool === currentDeck || pool === 'any') {
-                const opt = document.createElement('option');
-                opt.value = spread.id;
-                opt.setAttribute('data-i18n', spread.nameKey);
-                // Immediately translate if possible, or fallback
-                opt.textContent = (typeof t === 'function') ? t(spread.nameKey) : spread.id;
-                methodSelect.appendChild(opt);
+                const card = document.createElement('div');
+                card.className = 'method-card';
+                card.dataset.value = spread.id;
+                if (!firstRendered) {
+                    card.classList.add('active');
+                    methodSelect.dataset.value = spread.id;
+                    firstRendered = true;
+                }
+                
+                const icon = document.createElement('div');
+                icon.className = 'method-card-icon';
+                // Determine icon
+                icon.textContent = spread.id === 'single' ? '🎴' : (spread.id.includes('celtic') ? '✝️' : (pool === 'lenormand' ? '📜' : '✨')); 
+                
+                const title = document.createElement('div');
+                title.className = 'method-card-title';
+                title.dataset.i18n = spread.nameKey;
+                title.textContent = (typeof t === 'function') ? t(spread.nameKey) : spread.id;
+                
+                card.appendChild(icon);
+                card.appendChild(title);
+                methodSelect.appendChild(card);
             }
         });
         
-        // Trigger updates when methods change
         updateMethodDetails();
         updateDrawButtonText();
     }
 
-    if (deckSwitch) {
-        deckSwitch.addEventListener('change', populateMethods);
-    }
+    setupSegmentedControl('deck-switch', () => {
+        populateMethods();
+    });
+    
+    setupSegmentedControl('method-select', () => {
+        updateDrawButtonText();
+        updateMethodDetails();
+    });
+
     populateMethods();
 
     // Tab event listeners
@@ -709,7 +651,7 @@ function initApp() {
     }
     
     const loadedLang = getSavedLanguage();
-    langSwitch.value = loadedLang;
+    langSwitch.dataset.value = loadedLang;
     setLanguage(loadedLang);
     
     // Load saved style
@@ -717,7 +659,7 @@ function initApp() {
         const savedStyle = localStorage.getItem('tarotBridgeStyle');
         if (savedStyle === 'traditional' || savedStyle === 'anime') {
             currentStyle = savedStyle;
-            styleSwitch.value = currentStyle;
+            styleSwitch.dataset.value = currentStyle;
         }
     } catch (err) {}
     
@@ -726,7 +668,7 @@ function initApp() {
 }
 
 function updateMethodDetails() {
-    const method = methodSelect.value;
+    const method = methodSelect.dataset.value;
     const descEl = document.getElementById('method-desc');
     const tagsEl = document.getElementById('method-tags');
     
@@ -756,13 +698,8 @@ function updateMethodDetails() {
     }
 }
 
-methodSelect.addEventListener('change', () => {
-    updateDrawButtonText();
-    updateMethodDetails();
-});
-
 function updateDrawButtonText() {
-    const method = methodSelect.value;
+    const method = methodSelect.dataset.value;
     const spreadConfig = window.TarotSpreads ? window.TarotSpreads[method] : null;
     const count = spreadConfig ? spreadConfig.slots.length : 3;
 
@@ -844,18 +781,7 @@ function renderGallery() {
             const img = document.createElement('img');
             img.className = 'card-image';
             
-            let imagePath = card.image;
-            if (currentStyle === 'anime') {
-                imagePath = card.image.replace('images/traditional/', 'images/anime/');
-            }
-            img.src = imagePath;
-            
-            img.onerror = function() {
-                if (this.src !== card.image) {
-                    this.src = card.image;
-                }
-                this.onerror = null; 
-            };
+            setCardImageSource(img, card);
             
             const translatedName = getTranslatedCardName(card);
             img.alt = translatedName;
